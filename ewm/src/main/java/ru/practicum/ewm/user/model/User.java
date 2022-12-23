@@ -4,11 +4,9 @@ import lombok.*;
 
 import javax.persistence.*;
 
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-@Setter
-@ToString
 @Entity
 @Table(name = "users")
 public class User {
@@ -18,12 +16,9 @@ public class User {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "email")
+    @Column(name = "email", nullable = false, unique = true, length = 512)
     private String email;
-
-    @Column(name = "description")
-    private String description;
 }

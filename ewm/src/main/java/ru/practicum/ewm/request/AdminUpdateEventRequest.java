@@ -1,4 +1,4 @@
-package ru.practicum.ewm.admin;
+package ru.practicum.ewm.request;
 
 public class AdminUpdateEventRequest {
 }
