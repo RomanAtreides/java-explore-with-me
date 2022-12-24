@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.user.dto.UserDto;
-import ru.practicum.ewm.user.service.UserService;
+import ru.practicum.ewm.user.service.UserAdminService;
 
 import java.util.List;
 
@@ -12,24 +12,25 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/admin/users")
-public class AdminUserController {
+public class UserAdminController {
 
-    public final UserService userService;
+    private final UserAdminService userService;
 
     // Admin: Users - Получение информации о пользователях
     @GetMapping
-    public List<UserDto> findAllUsers(
+    public List<UserDto> findUsers(
             @RequestParam(required = false) Long[] ids,
             @RequestParam(required = false, defaultValue = "0") Integer from,
             @RequestParam(required = false, defaultValue = "10") Integer size) {
-        log.info("Получение списка всех пользователей");
-        return userService.findAllUsers(ids, from, size);
+        log.info("Получение списка пользователей from = {}, size = {} или с ids = {}", from, size, ids);
+        return userService.findUsers(ids, from, size);
     }
 
     // Admin: Users - Добавление нового пользователя
     @PostMapping
     public UserDto addNewUser(@RequestBody UserDto userDto) {
         UserDto newUserDto = userService.addNewUser(userDto);
+
         log.info("Добавление нового пользователя {}", newUserDto);
         return newUserDto;
     }
@@ -68,11 +69,6 @@ public class AdminUserController {
     // put      /admin/events/{eventId} - Редактирование события
     // patch    /admin/events/{eventId}/publish - Публикация события
     // patch    /admin/events/{eventId}/reject - Отклонение события
-
-// Админ:   категории
-    // patch    /admin/categories - Изменение категории
-    // post     /admin/categories - Добавление новой категории
-    // delete   /admin/categories/{catId} - Удаление категории
 
 // Админ:   Подборки событий
     // post     /admin/compilations - Добавление новой подборки

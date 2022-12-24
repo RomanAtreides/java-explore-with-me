@@ -16,7 +16,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class UserServiceImpl implements UserService {
+public class UserAdminServiceImpl implements UserAdminService {
 
     private final UserRepository userRepository;
 
@@ -24,11 +24,12 @@ public class UserServiceImpl implements UserService {
     public UserDto addNewUser(UserDto userDto) {
         final User user = UserMapper.toUser(userDto);
         final User entity = userRepository.save(user);
+
         return UserMapper.toUserDto(entity);
     }
 
     @Override
-    public List<UserDto> findAllUsers(Long[] ids, Integer from, Integer size) {
+    public List<UserDto> findUsers(Long[] ids, Integer from, Integer size) {
         Pageable pageable = FromSizeRequest.of(from, size);
 
         if (ids != null && ids.length > 0) {
