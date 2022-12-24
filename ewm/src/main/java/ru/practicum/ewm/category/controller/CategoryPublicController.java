@@ -21,14 +21,14 @@ public class CategoryPublicController {
     public List<CategoryDto> findCategories(
             @RequestParam(required = false, defaultValue = "0") Integer from,
             @RequestParam(required = false, defaultValue = "10") Integer size) {
-        log.info("Получение категорий from = {}, size = {}", from, size);
+        log.info("Получение категорий from={}, size={}", from, size);
         return categoryPublicService.findCategories(from, size);
     }
 
     // Public: Categories - Получение информации о категории по её идентификатору
     @GetMapping("/{catId}")
     public CategoryDto findCategoryById(@PathVariable Long catId) {
-        log.info("Получение информации о категории с id = {}", catId);
+        log.info("Получение информации о категории с id={}", catId);
         return categoryPublicService.findCategoryById(catId);
     }
 }

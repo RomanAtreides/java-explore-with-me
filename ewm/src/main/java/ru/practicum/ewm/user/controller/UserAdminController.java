@@ -22,7 +22,7 @@ public class UserAdminController {
             @RequestParam(required = false) Long[] ids,
             @RequestParam(required = false, defaultValue = "0") Integer from,
             @RequestParam(required = false, defaultValue = "10") Integer size) {
-        log.info("Получение списка пользователей from = {}, size = {} или с ids = {}", from, size, ids);
+        log.info("Получение списка пользователей from={}, size={} или с ids={}", from, size, ids);
         return userService.findUsers(ids, from, size);
     }
 
@@ -38,7 +38,7 @@ public class UserAdminController {
     // Admin: Users - Удаление пользователя
     @DeleteMapping("/{userId}")
     public void deleteUser(@PathVariable Long userId) {
-        log.info("Удаление пользователя с id = {}", userId);
+        log.info("Удаление пользователя с id={}", userId);
         userService.deleteUser(userId);
     }
 

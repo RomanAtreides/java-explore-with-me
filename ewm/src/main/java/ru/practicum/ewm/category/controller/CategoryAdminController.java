@@ -21,6 +21,7 @@ public class CategoryAdminController {
     // Admin: Categories - Изменение категории
     @PatchMapping
     public CategoryDto changeCategory(@Validated(Update.class) @RequestBody CategoryDto categoryDto) {
+        log.info("Изменение категории с id={}; {}", categoryDto.getId(), categoryDto);
         return categoryService.changeCategory(categoryDto);
     }
 
@@ -36,7 +37,7 @@ public class CategoryAdminController {
     // Admin: Categories - Удаление категории
     @DeleteMapping("/{catId}")
     public void deleteCategory(@PathVariable Long catId) {
-        log.info("Удаление категории c id = {}", catId);
+        log.info("Удаление категории c id={}", catId);
         categoryService.deleteCategory(catId);
     }
 }
