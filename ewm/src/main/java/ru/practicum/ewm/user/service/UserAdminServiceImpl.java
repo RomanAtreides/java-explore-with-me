@@ -21,6 +21,7 @@ public class UserAdminServiceImpl implements UserAdminService {
 
     private final UserRepository userRepository;
 
+    @Override
     @Transactional
     public UserDto addNewUser(UserDto userDto) {
         final User user = UserMapper.toUser(userDto);
