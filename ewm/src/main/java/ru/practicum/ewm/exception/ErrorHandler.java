@@ -14,7 +14,7 @@ import java.util.Arrays;
 @RestControllerAdvice("ru.practicum.ewm")
 public class ErrorHandler {
 
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
