@@ -4,9 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Embeddable;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Embeddable
 // Широта и долгота места проведения события
 public class Location {
 

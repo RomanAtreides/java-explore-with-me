@@ -1,9 +1,16 @@
 package ru.practicum.ewm.event.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import ru.practicum.ewm.event.model.Location;
+import ru.practicum.ewm.utility.marker.Create;
+import ru.practicum.ewm.utility.marker.Update;
+
+import javax.validation.constraints.Future;
+import javax.validation.constraints.Size;
 
 @Data
 @NoArgsConstructor
@@ -11,15 +18,39 @@ import ru.practicum.ewm.event.model.Location;
 // Новое событие
 public class NewEventDto {
 
+    @Size(min = 20, max = 2000, groups = {Create.class, Update.class})
     private String annotation; // Краткое описание; maxLength: 2000, minLength: 20; example: Сплав на байдарках похож на полет
+
     private Long category; // id категории к которой относится событие
+
+    /*@Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CategoryForNewEventDto {
+
+        private Long id;
+    }*/
+
+    @Size(min = 20, max = 7000, groups = {Create.class, Update.class})
     private String description; // Полное описание события; maxLength: 7000, minLength: 20
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Future(groups = {Create.class, Update.class})
     private String eventDate; // Дата и время на которые намечено событие (в формате "yyyy-MM-dd HH:mm:ss"); example: 2024-12-31 15:10:05
+
     private Location location; // Широта и долгота места проведения события; lat + lon
+
+    @Value("false")
     private boolean paid; // Нужно ли оплачивать участие; default: false
+
+    @Value("0")
     private Integer participantLimit; // Ограничение на количество участников. Значение 0 - означает отсутствие ограничения; default: 0
-    private boolean requestModeration; // Нужна ли пре-модерация заявок на участие.
+
+    @Value("true")
+    private boolean requestModeration; // Нужна ли пре-модерация заявок на участие; default: true
     // Если true, то все заявки будут ожидать подтверждения инициатором события.
-    // Если false - то будут подтверждаться автоматически; default: true
+    // Если false - то будут подтверждаться автоматически;
+
+    @Size(min = 3, max = 120, groups = {Create.class, Update.class})
     private String title; // Заголовок события; example: Сплав на байдарках; maxLength: 120, minLength: 3
 }
