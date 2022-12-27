@@ -51,4 +51,24 @@ public class EventPrivateController {
         log.info("Добавление нового события {}", newEventDto);
         return eventFullDto;
     }
+
+    // Private: Events - Получение полной информации о событии добавленном текущим пользователем
+    @GetMapping("/{eventId}")
+    public EventFullDto findUserEventFullInfo(
+            @PathVariable Long userId,
+            @PathVariable Long eventId) {
+        log.info("Получение полной информации о событии с id={} добавленном пользователем с id={}", eventId, userId);
+        return eventPrivateService.findUserEventFullInfo(userId, eventId);
+    }
+
+    // Private: Events - Отмена события добавленного текущим пользователем
+    @PatchMapping("/{eventId}")
+    public EventFullDto cancelUserEvent(
+            @PathVariable Long userId,
+            @PathVariable Long eventId) {
+        log.info("Отмена события с id={} добавленного пользователем с id={}", eventId, userId);
+        return eventPrivateService.cancelUserEvent(userId, eventId);
+    }
+
+    // Private: Events - Получение информации о запросах на участие в событии текущего пользователя
 }

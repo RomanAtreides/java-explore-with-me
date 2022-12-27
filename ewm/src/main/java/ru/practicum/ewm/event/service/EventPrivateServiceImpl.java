@@ -64,40 +64,39 @@ public class EventPrivateServiceImpl implements EventPrivateService {
         }
 
         // дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента
+        LocalDateTime newEventDate = updateEventRequest.getEventDate();
 
-        String annotation = updateEventRequest.getAnnotation();
+        checkEventDate(newEventDate);
+
+        String newAnnotation = updateEventRequest.getAnnotation();
         Long categoryId = updateEventRequest.getCategory();
-        String description = updateEventRequest.getDescription();
-        LocalDateTime eventDate = updateEventRequest.getEventDate();
+        String newDescription = updateEventRequest.getDescription();
         boolean paid = updateEventRequest.isPaid();
-        Integer participantLimit = updateEventRequest.getParticipantLimit();
-        String title = updateEventRequest.getTitle();
+        Integer newParticipantLimit = updateEventRequest.getParticipantLimit();
+        String newTitle = updateEventRequest.getTitle();
         CategoryDto categoryDto = categoryPublicService.findCategoryById(categoryId);
 
-        if (annotation != null) {
-            eventToUpdate.setAnnotation(annotation);
+        if (newAnnotation != null) {
+            eventToUpdate.setAnnotation(newAnnotation);
         }
 
         if (categoryDto != null) {
             eventToUpdate.setCategory(CategoryMapper.categoryDtoToCategory(categoryDto));
         }
 
-        if (description != null) {
-            eventToUpdate.setDescription(description);
+        if (newDescription != null) {
+            eventToUpdate.setDescription(newDescription);
         }
 
-        if (eventDate != null) {
-            eventToUpdate.setEventDate(eventDate);
-        }
-
+        eventToUpdate.setEventDate(newEventDate);
         eventToUpdate.setPaid(paid);
 
-        if (participantLimit != null) {
-            eventToUpdate.setParticipantLimit(participantLimit);
+        if (newParticipantLimit != null) {
+            eventToUpdate.setParticipantLimit(newParticipantLimit);
         }
 
-        if (title != null) {
-            eventToUpdate.setTitle(title);
+        if (newTitle != null) {
+            eventToUpdate.setTitle(newTitle);
         }
         eventRepository.save(eventToUpdate);
         return EventMapper.eventToEventFullDto(eventToUpdate);
@@ -106,6 +105,8 @@ public class EventPrivateServiceImpl implements EventPrivateService {
     @Override
     @Transactional
     public EventFullDto addNewEvent(Long userId, NewEventDto newEventDto) {
+        checkEventDate(newEventDto.getEventDate());
+
         UserDto userDto = userAdminService.findUsers(new Long[]{userId}, 0, 1).get(0);
         final User initiator = UserMapper.toUser(userDto);
 
@@ -124,6 +125,28 @@ public class EventPrivateServiceImpl implements EventPrivateService {
         return EventMapper.eventToEventFullDto(entity);
     }
 
+    @Override
+    public EventFullDto findUserEventFullInfo(Long userId, Long eventId) {
+        Event event = getEventIfExists(eventId);
+
+        checkIfUserIsInitiator(userId, eventId, event);
+        return EventMapper.eventToEventFullDto(event);
+    }
+
+    @Override
+    public EventFullDto cancelUserEvent(Long userId, Long eventId) {
+        Event event = getEventIfExists(eventId);
+
+        checkIfUserIsInitiator(userId, eventId, event);
+
+        if (!event.getState().equals(EventState.PENDING)) {
+            throw new AccessException("Only pending or canceled events can be changed");
+        }
+        event.setState(EventState.CANCELED);
+        Event canceledEvent = eventRepository.save(event);
+        return EventMapper.eventToEventFullDto(canceledEvent);
+    }
+
     private Event getEventIfExists(Long eventId) {
         String exceptionMessage = "Event with id=" + eventId + " was not found";
 
@@ -132,5 +155,18 @@ public class EventPrivateServiceImpl implements EventPrivateService {
         }
         return eventRepository.findById(eventId)
                 .orElseThrow(() -> new EntityNotFoundException(exceptionMessage));
+    }
+
+    private static void checkEventDate(LocalDateTime newEventDate) {
+        if (newEventDate.isBefore(LocalDateTime.now())) {
+            throw new ValidationException("Дата и время на которые намечено событие не может быть раньше," +
+                    "чем через два часа от текущего момента");
+        }
+    }
+
+    private static void checkIfUserIsInitiator(Long userId, Long eventId, Event event) {
+        if (!event.getInitiator().getId().equals(userId)) {
+            throw new EntityNotFoundException("Event with id=" + eventId + " was not found");
+        }
     }
 }

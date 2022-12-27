@@ -14,4 +14,8 @@ public interface EventPrivateService {
     EventFullDto changeEvent(Long userId, UpdateEventRequest updateEventRequest);
 
     EventFullDto addNewEvent(Long userId, NewEventDto newEventDto);
+
+    EventFullDto findUserEventFullInfo(Long userId, Long eventId);
+
+    EventFullDto cancelUserEvent(Long userId, Long eventId);
 }

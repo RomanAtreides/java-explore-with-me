@@ -18,7 +18,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiError handleBadRequest(final ValidationException exception) {
+    public ApiError handleValidationException(final ValidationException exception) {
         log.debug("400 {}", exception.getMessage(), exception);
         return new ApiError(
                 Arrays.asList(exception.getStackTrace()),
@@ -31,7 +31,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    public ApiError handleForbidden(final AccessException exception) {
+    public ApiError handleAccessException(final AccessException exception) {
         log.debug("403 {}", exception.getMessage(), exception);
         return new ApiError(
                 Arrays.asList(exception.getStackTrace()),
@@ -44,7 +44,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ApiError handleNotFound(final EntityNotFoundException exception) {
+    public ApiError handleEntityNotFoundException(final EntityNotFoundException exception) {
         log.debug("404 {}", exception.getMessage(), exception);
         return new ApiError(
                 Arrays.asList(exception.getStackTrace()),
@@ -57,7 +57,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ApiError handleConflict(final RequestConflictException exception) {
+    public ApiError handleRequestConflictException(final RequestConflictException exception) {
         log.debug("409 {}", exception.getMessage(), exception);
         return new ApiError(
                 Arrays.asList(exception.getStackTrace()),
@@ -70,7 +70,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ApiError handleInternalServerError(final EntityAlreadyExistsException exception) {
+    public ApiError handleEntityAlreadyExistsException(final EntityAlreadyExistsException exception) {
         log.debug("500 {}", exception.getMessage(), exception);
         return new ApiError(
                 Arrays.asList(exception.getStackTrace()),
