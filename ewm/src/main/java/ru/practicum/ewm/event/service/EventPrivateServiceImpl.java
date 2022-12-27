@@ -9,11 +9,13 @@ import ru.practicum.ewm.category.dto.CategoryDto;
 import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.category.service.CategoryPublicService;
 import ru.practicum.ewm.event.EventMapper;
+import ru.practicum.ewm.event.EventState;
 import ru.practicum.ewm.event.dto.EventFullDto;
 import ru.practicum.ewm.event.dto.EventShortDto;
 import ru.practicum.ewm.event.dto.NewEventDto;
 import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.event.repository.EventRepository;
+import ru.practicum.ewm.exception.AccessException;
 import ru.practicum.ewm.exception.EntityNotFoundException;
 import ru.practicum.ewm.exception.ValidationException;
 import ru.practicum.ewm.request.UpdateEventRequest;
@@ -47,6 +49,21 @@ public class EventPrivateServiceImpl implements EventPrivateService {
     @Override
     @Transactional
     public EventFullDto changeEvent(Long userId, UpdateEventRequest updateEventRequest) {
+        // изменить можно только отмененные события или события в состоянии ожидания модерации
+        Event eventToUpdate = getEventIfExists(updateEventRequest.getEventId());
+        EventState state = eventToUpdate.getState();
+
+        if (state.equals(EventState.PUBLISHED)) {
+            throw new AccessException("Only pending or canceled events can be changed");
+        }
+
+        // если редактируется отменённое событие, то оно автоматически переходит в состояние ожидания модерации
+        if (state.equals(EventState.CANCELED)) {
+            eventToUpdate.setState(EventState.PENDING);
+        }
+
+        // дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента
+        
         String annotation = updateEventRequest.getAnnotation();
         Long categoryId = updateEventRequest.getCategory();
         String description = updateEventRequest.getDescription();
@@ -54,7 +71,6 @@ public class EventPrivateServiceImpl implements EventPrivateService {
         boolean paid = updateEventRequest.isPaid();
         Integer participantLimit = updateEventRequest.getParticipantLimit();
         String title = updateEventRequest.getTitle();
-        Event eventToUpdate = getEventIfExists(updateEventRequest.getEventId());
         CategoryDto categoryDto = categoryPublicService.findCategoryById(categoryId);
 
         if (annotation != null) {
