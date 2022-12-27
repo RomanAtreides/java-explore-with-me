@@ -11,6 +11,7 @@ import ru.practicum.ewm.utility.marker.Create;
 
 import javax.validation.constraints.Future;
 import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -24,20 +25,12 @@ public class NewEventDto {
 
     private Long category; // id категории к которой относится событие
 
-    /*@Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class CategoryForNewEventDto {
-
-        private Long id;
-    }*/
-
     @Size(min = 20, max = 7000, groups = Create.class)
     private String description; // Полное описание события; maxLength: 7000, minLength: 20
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    //@Future(groups = Create.class)
-    private String eventDate; // Дата и время на которые намечено событие (в формате "yyyy-MM-dd HH:mm:ss"); example: 2024-12-31 15:10:05
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @Future(groups = Create.class)
+    private LocalDateTime eventDate; // Дата и время на которые намечено событие (в формате "yyyy-MM-dd HH:mm:ss"); example: 2024-12-31 15:10:05
 
     private Location location; // Широта и долгота места проведения события; lat + lon
 

@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import ru.practicum.ewm.category.dto.CategoryDto;
 import ru.practicum.ewm.user.dto.UserShortDto;
 
+import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,7 +19,7 @@ public class EventShortDto {
     private String annotation; // Краткое описание
     private CategoryDto category; // Категория; id + name
     private Long confirmedRequests; // Количество одобренных заявок на участие в данном событии
-    private String eventDate; // Дата и время на которые намечено событие (в формате "yyyy-MM-dd HH:mm:ss"), example: 2024-12-31 15:10:05
+    private LocalDateTime eventDate; // Дата и время на которые намечено событие (в формате "yyyy-MM-dd HH:mm:ss"), example: 2024-12-31 15:10:05
     private Long id; // Идентификатор
     private UserShortDto initiator; // Пользователь (краткая информация); id + name!
     private boolean paid; // Нужно ли оплачивать участие

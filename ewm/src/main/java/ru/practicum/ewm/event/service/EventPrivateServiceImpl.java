@@ -25,6 +25,7 @@ import ru.practicum.ewm.user.model.User;
 import ru.practicum.ewm.user.service.UserAdminService;
 import ru.practicum.ewm.utility.FromSizeRequest;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -63,11 +64,11 @@ public class EventPrivateServiceImpl implements EventPrivateService {
         }
 
         // дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента
-        
+
         String annotation = updateEventRequest.getAnnotation();
         Long categoryId = updateEventRequest.getCategory();
         String description = updateEventRequest.getDescription();
-        String eventDate = updateEventRequest.getEventDate();
+        LocalDateTime eventDate = updateEventRequest.getEventDate();
         boolean paid = updateEventRequest.isPaid();
         Integer participantLimit = updateEventRequest.getParticipantLimit();
         String title = updateEventRequest.getTitle();

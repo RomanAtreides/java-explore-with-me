@@ -9,7 +9,6 @@ import ru.practicum.ewm.event.dto.NewEventDto;
 import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.user.UserMapper;
 import ru.practicum.ewm.user.model.User;
-import ru.practicum.ewm.utility.Common;
 
 import java.time.LocalDateTime;
 
@@ -27,14 +26,14 @@ public class EventMapper {
                 .annotation(newEventDto.getAnnotation())
                 .category(category)
                 .confirmedRequests(participationRequestsQuantity)
-                .createdOn(LocalDateTime.now().format(Common.FORMATTER)) // ???
+                .createdOn(LocalDateTime.now())
                 .description(newEventDto.getDescription())
                 .eventDate(newEventDto.getEventDate())
                 .initiator(initiator)
                 .location(newEventDto.getLocation())
                 .paid(newEventDto.isPaid())
                 .participantLimit(newEventDto.getParticipantLimit())
-                .publishedOn(LocalDateTime.now().format(Common.FORMATTER)) // ???
+                .publishedOn(LocalDateTime.now()) // ???
                 .requestModeration(newEventDto.isRequestModeration())
                 .state(EventState.PENDING)
                 .title(newEventDto.getTitle())
@@ -57,7 +56,7 @@ public class EventMapper {
                 .participantLimit(event.getParticipantLimit())
                 .publishedOn(event.getPublishedOn())
                 .requestModeration(event.isRequestModeration())
-                .state(event.getState().toString())
+                .state(event.getState())
                 .title(event.getTitle())
                 .views(event.getViews())
                 .build();

@@ -9,6 +9,7 @@ import ru.practicum.ewm.event.EventState;
 import ru.practicum.ewm.user.model.User;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -35,13 +36,13 @@ public class Event {
     private Long confirmedRequests; // Количество одобренных заявок на участие в данном событии
 
     @Column(name = "created_on")
-    private String createdOn; // Дата и время создания события (в формате "yyyy-MM-dd HH:mm:ss"); example: 2022-09-06 11:00:23
+    private LocalDateTime createdOn; // Дата и время создания события (в формате "yyyy-MM-dd HH:mm:ss"); example: 2022-09-06 11:00:23
 
     @Column(name = "description")
     private String description; // Полное описание события
 
     @Column(name = "event_date")
-    private String eventDate; // Дата и время на которые намечено событие (в формате "yyyy-MM-dd HH:mm:ss"); example: 2024-12-31 15:10:05
+    private LocalDateTime eventDate; // Дата и время на которые намечено событие (в формате "yyyy-MM-dd HH:mm:ss"); example: 2024-12-31 15:10:05
 
     @ManyToOne
     @JoinColumn(name = "initiator_id")
@@ -64,7 +65,7 @@ public class Event {
     private Integer participantLimit; // default: 0; Ограничение на количество участников. Значение 0 - означает отсутствие ограничения
 
     @Column(name = "published_on")
-    private String publishedOn; // Дата и время публикации события (в формате "yyyy-MM-dd HH:mm:ss"); example: 2022-09-06 15:10:05
+    private LocalDateTime publishedOn; // Дата и время публикации события (в формате "yyyy-MM-dd HH:mm:ss"); example: 2022-09-06 15:10:05
 
     @Column(name = "request_moderation")
     private boolean requestModeration; // default: true; Нужна ли пре-модерация заявок на участие
