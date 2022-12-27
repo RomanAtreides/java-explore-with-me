@@ -1,6 +1,7 @@
 package ru.practicum.ewm.event.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.ewm.event.model.Location;
@@ -10,6 +11,7 @@ import ru.practicum.ewm.user.dto.UserShortDto;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class EventFullDto {
 
     private String annotation; // Краткое описание

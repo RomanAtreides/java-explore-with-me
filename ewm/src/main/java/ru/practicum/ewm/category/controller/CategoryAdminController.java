@@ -21,7 +21,7 @@ public class CategoryAdminController {
     // Admin: Categories - Изменение категории
     @PatchMapping
     public CategoryDto changeCategory(@Validated(Update.class) @RequestBody CategoryDto categoryDto) {
-        log.info("Изменение категории с id={}; {}", categoryDto.getId(), categoryDto);
+        log.info("Изменение категории с id={}", categoryDto.getId());
         return categoryService.changeCategory(categoryDto);
     }
 

@@ -5,14 +5,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.exception.EntityNotFoundException;
+import ru.practicum.ewm.exception.ValidationException;
 import ru.practicum.ewm.user.UserMapper;
 import ru.practicum.ewm.user.dto.UserDto;
 import ru.practicum.ewm.user.model.User;
 import ru.practicum.ewm.user.repository.UserRepository;
 import ru.practicum.ewm.utility.FromSizeRequest;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,17 +36,9 @@ public class UserAdminServiceImpl implements UserAdminService {
         Pageable pageable = FromSizeRequest.of(from, size);
 
         if (ids != null && ids.length > 0) {
-            List<UserDto> users = new ArrayList<>();
-            User user;
-
-            for (Long id : ids) {
-                user = userRepository.findById(id).orElse(null);
-
-                if (user != null) {
-                    users.add(UserMapper.toUserDto(user));
-                }
-            }
-            return users;
+            return userRepository.findUsers(ids).stream()
+                    .map(UserMapper::toUserDto)
+                    .collect(Collectors.toList());
         }
         return userRepository.findAll(pageable).map(UserMapper::toUserDto).getContent();
     }
@@ -53,9 +46,16 @@ public class UserAdminServiceImpl implements UserAdminService {
     @Override
     @Transactional
     public void deleteUser(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("User with id=" + userId + " was not found"));
+        userRepository.delete(getUserIfExists(userId));
+    }
 
-        userRepository.delete(user);
+    private User getUserIfExists(Long userId) {
+        String exceptionMessage = "User with id=" + userId + " was not found";
+
+        if (userId == null) {
+            throw new ValidationException(exceptionMessage);
+        }
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(exceptionMessage));
     }
 }

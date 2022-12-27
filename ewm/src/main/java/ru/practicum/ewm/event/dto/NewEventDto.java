@@ -2,6 +2,7 @@ package ru.practicum.ewm.event.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,6 +16,7 @@ import javax.validation.constraints.Size;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 // Новое событие
 public class NewEventDto {
 
@@ -53,4 +55,19 @@ public class NewEventDto {
 
     @Size(min = 3, max = 120, groups = {Create.class, Update.class})
     private String title; // Заголовок события; example: Сплав на байдарках; maxLength: 120, minLength: 3
+
+    @Override
+    public String toString() {
+        return "NewEventDto{" +
+                "annotation length='" + annotation.length() + '\'' +
+                ", category=" + category +
+                ", description length='" + description.length() + '\'' +
+                ", eventDate='" + eventDate + '\'' +
+                ", location=" + location +
+                ", paid=" + paid +
+                ", participantLimit=" + participantLimit +
+                ", requestModeration=" + requestModeration +
+                ", title='" + title + '\'' +
+                '}';
+    }
 }

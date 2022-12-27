@@ -1,6 +1,7 @@
 package ru.practicum.ewm.event.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.ewm.category.dto.CategoryDto;
@@ -9,6 +10,7 @@ import ru.practicum.ewm.user.dto.UserShortDto;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 // Краткая информация о событии
 public class EventShortDto {
 

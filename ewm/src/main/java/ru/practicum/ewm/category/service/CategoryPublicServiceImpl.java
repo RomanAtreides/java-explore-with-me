@@ -9,6 +9,7 @@ import ru.practicum.ewm.category.dto.CategoryDto;
 import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.category.repository.CategoryRepository;
 import ru.practicum.ewm.exception.EntityNotFoundException;
+import ru.practicum.ewm.exception.ValidationException;
 import ru.practicum.ewm.utility.FromSizeRequest;
 
 import java.util.List;
@@ -29,8 +30,16 @@ public class CategoryPublicServiceImpl implements CategoryPublicService {
 
     @Override
     public CategoryDto findCategoryById(Long catId) {
-        Category category = categoryRepository.findById(catId)
-                .orElseThrow(() -> new EntityNotFoundException("Event with id=" + catId + " was not found"));
-        return CategoryMapper.toCategoryDto(category);
+        return CategoryMapper.toCategoryDto(getCategoryIfExists(catId));
+    }
+
+    private Category getCategoryIfExists(Long catId) {
+        String exceptionMessage = "Category with id=" + catId + " was not found";
+
+        if (catId == null) {
+            throw new ValidationException(exceptionMessage);
+        }
+        return categoryRepository.findById(catId)
+                .orElseThrow(() -> new EntityNotFoundException(exceptionMessage));
     }
 }

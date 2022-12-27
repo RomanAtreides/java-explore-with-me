@@ -32,7 +32,7 @@ public class EventPrivateController {
     public EventFullDto changeEvent(
             @PathVariable Long userId,
             @RequestBody UpdateEventRequest updateEventRequest) {
-        log.info("Изменение события добавленного пользователем с id={}; {}", userId, updateEventRequest);
+        log.info("Изменение события {} добавленного пользователем с id={}", updateEventRequest, userId);
         return eventPrivateService.changeEvent(userId, updateEventRequest);
     }
 
@@ -41,7 +41,9 @@ public class EventPrivateController {
     public EventFullDto addNewEvent(
             @PathVariable Long userId,
             @RequestBody NewEventDto newEventDto) {
+        EventFullDto eventFullDto = eventPrivateService.addNewEvent(userId, newEventDto);
+
         log.info("Добавление нового события {}", newEventDto);
-        return eventPrivateService.newEventDto(userId, newEventDto);
+        return eventFullDto;
     }
 }
