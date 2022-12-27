@@ -8,11 +8,13 @@ import org.springframework.beans.factory.annotation.Value;
 import ru.practicum.ewm.utility.marker.Update;
 
 import javax.validation.constraints.Future;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@NotNull(groups = Update.class)
 // Данные для изменения информации о событии
 public class UpdateEventRequest {
 
@@ -25,7 +27,7 @@ public class UpdateEventRequest {
     private String description; // Новое описание; maxLength: 7000, minLength: 20
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Future(groups = Update.class)
+    //@Future(groups = Update.class)
     private String eventDate; // Дата и время на которые намечено событие (в формате "yyyy-MM-dd HH:mm:ss"); example: 2024-12-31 15:10:05
 
     private Long eventId; // Идентификатор события; example: 1

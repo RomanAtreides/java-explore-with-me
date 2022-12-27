@@ -36,7 +36,7 @@ public class NewEventDto {
     private String description; // Полное описание события; maxLength: 7000, minLength: 20
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Future(groups = Create.class)
+    //@Future(groups = Create.class)
     private String eventDate; // Дата и время на которые намечено событие (в формате "yyyy-MM-dd HH:mm:ss"); example: 2024-12-31 15:10:05
 
     private Location location; // Широта и долгота места проведения события; lat + lon

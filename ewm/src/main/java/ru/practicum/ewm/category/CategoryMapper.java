@@ -1,9 +1,11 @@
 package ru.practicum.ewm.category;
 
+import org.springframework.stereotype.Component;
 import ru.practicum.ewm.category.dto.CategoryDto;
 import ru.practicum.ewm.category.dto.NewCategoryDto;
 import ru.practicum.ewm.category.model.Category;
 
+@Component
 public class CategoryMapper {
 
     public static CategoryDto toCategoryDto(Category category) {

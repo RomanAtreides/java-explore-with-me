@@ -11,6 +11,7 @@ import javax.validation.constraints.NotNull;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@NotNull(groups = {Create.class, Update.class})
 public class CategoryDto {
 
     @NotNull(groups = {Create.class, Update.class})
