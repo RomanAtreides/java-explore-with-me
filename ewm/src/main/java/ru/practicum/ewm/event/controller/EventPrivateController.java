@@ -9,6 +9,8 @@ import ru.practicum.ewm.event.dto.NewEventDto;
 import ru.practicum.ewm.event.service.EventPrivateService;
 import ru.practicum.ewm.request.UpdateEventRequest;
 
+import java.util.List;
+
 @Slf4j
 @RequiredArgsConstructor
 @RestController
@@ -19,7 +21,7 @@ public class EventPrivateController {
 
     // Private: Events - Получение событий, добавленных текущим пользователем
     @GetMapping
-    public EventShortDto findUserEvents(
+    public List<EventShortDto> findUserEvents(
             @PathVariable Long userId,
             @RequestParam(required = false, defaultValue = "0") Integer from,
             @RequestParam(required = false, defaultValue = "10") Integer size) {

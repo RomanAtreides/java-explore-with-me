@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import ru.practicum.ewm.event.model.Location;
 import ru.practicum.ewm.utility.marker.Create;
-import ru.practicum.ewm.utility.marker.Update;
 
 import javax.validation.constraints.Future;
 import javax.validation.constraints.Size;
@@ -20,7 +19,7 @@ import javax.validation.constraints.Size;
 // Новое событие
 public class NewEventDto {
 
-    @Size(min = 20, max = 2000, groups = {Create.class, Update.class})
+    @Size(min = 20, max = 2000, groups = Create.class)
     private String annotation; // Краткое описание; maxLength: 2000, minLength: 20; example: Сплав на байдарках похож на полет
 
     private Long category; // id категории к которой относится событие
@@ -33,11 +32,11 @@ public class NewEventDto {
         private Long id;
     }*/
 
-    @Size(min = 20, max = 7000, groups = {Create.class, Update.class})
+    @Size(min = 20, max = 7000, groups = Create.class)
     private String description; // Полное описание события; maxLength: 7000, minLength: 20
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Future(groups = {Create.class, Update.class})
+    @Future(groups = Create.class)
     private String eventDate; // Дата и время на которые намечено событие (в формате "yyyy-MM-dd HH:mm:ss"); example: 2024-12-31 15:10:05
 
     private Location location; // Широта и долгота места проведения события; lat + lon
@@ -53,7 +52,7 @@ public class NewEventDto {
     // Если true, то все заявки будут ожидать подтверждения инициатором события.
     // Если false - то будут подтверждаться автоматически;
 
-    @Size(min = 3, max = 120, groups = {Create.class, Update.class})
+    @Size(min = 3, max = 120, groups = Create.class)
     private String title; // Заголовок события; example: Сплав на байдарках; maxLength: 120, minLength: 3
 
     @Override

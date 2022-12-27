@@ -1,6 +1,7 @@
 package ru.practicum.ewm.event.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.category.CategoryMapper;
@@ -17,6 +18,10 @@ import ru.practicum.ewm.user.UserMapper;
 import ru.practicum.ewm.user.dto.UserDto;
 import ru.practicum.ewm.user.model.User;
 import ru.practicum.ewm.user.service.UserAdminService;
+import ru.practicum.ewm.utility.FromSizeRequest;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,8 +33,12 @@ public class EventPrivateServiceImpl implements EventPrivateService {
     private final CategoryPublicService categoryPublicService;
 
     @Override
-    public EventShortDto findUserEvents(Long userId, Integer from, Integer size) {
-        return null;
+    public List<EventShortDto> findUserEvents(Long userId, Integer from, Integer size) {
+        Pageable pageable = FromSizeRequest.of(from, size);
+        List<Event> events = eventRepository.findEventsByInitiatorId(userId, pageable);
+        return events.stream()
+                .map(EventMapper::eventToEventShortDto)
+                .collect(Collectors.toList());
     }
 
     @Override

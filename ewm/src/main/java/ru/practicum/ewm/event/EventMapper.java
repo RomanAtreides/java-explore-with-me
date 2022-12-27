@@ -3,6 +3,7 @@ package ru.practicum.ewm.event;
 import ru.practicum.ewm.category.CategoryMapper;
 import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.event.dto.EventFullDto;
+import ru.practicum.ewm.event.dto.EventShortDto;
 import ru.practicum.ewm.event.dto.NewEventDto;
 import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.user.UserMapper;
@@ -55,6 +56,20 @@ public class EventMapper {
                 .publishedOn(event.getPublishedOn())
                 .requestModeration(event.isRequestModeration())
                 .state(event.getState().toString())
+                .title(event.getTitle())
+                .views(event.getViews())
+                .build();
+    }
+
+    public static EventShortDto eventToEventShortDto(Event event) {
+        return EventShortDto.builder()
+                .annotation(event.getAnnotation())
+                .category(CategoryMapper.toCategoryDto(event.getCategory()))
+                .confirmedRequests(event.getConfirmedRequests())
+                .eventDate(event.getEventDate())
+                .id(event.getId())
+                .initiator(UserMapper.toUserShortDto(event.getInitiator()))
+                .paid(event.isPaid())
                 .title(event.getTitle())
                 .views(event.getViews())
                 .build();
