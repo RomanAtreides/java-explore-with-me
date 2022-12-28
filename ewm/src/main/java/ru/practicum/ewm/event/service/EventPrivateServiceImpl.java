@@ -56,7 +56,7 @@ public class EventPrivateServiceImpl implements EventPrivateService {
         EventState state = eventToUpdate.getState();
 
         if (state.equals(EventState.PUBLISHED)) {
-            throw new AccessException("Only pending or canceled events can be changed");
+            throw new AccessException("Только события находящиеся на модерации могут быть изменены");
         }
 
         // если редактируется отменённое событие, то оно автоматически переходит в состояние ожидания модерации
@@ -120,7 +120,10 @@ public class EventPrivateServiceImpl implements EventPrivateService {
 
         final Long views = 0L; // Взять из сервиса статистики
 
-        final Event event = EventMapper.newEventDtoToEvent(newEventDto, initiator, category, participationRequestsQuantity, views);
+        final Event event = EventMapper.newEventDtoToEvent(
+                newEventDto, initiator, category, participationRequestsQuantity, views
+        );
+
         final Event entity = eventRepository.save(event);
 
         return EventMapper.eventToEventFullDto(entity);
@@ -141,7 +144,7 @@ public class EventPrivateServiceImpl implements EventPrivateService {
         checkIfUserIsInitiator(userId, eventId, event);
 
         if (!event.getState().equals(EventState.PENDING)) {
-            throw new AccessException("Only pending or canceled events can be changed");
+            throw new AccessException("Только события находящиеся на модерации могут быть изменены");
         }
         event.setState(EventState.CANCELED);
         Event canceledEvent = eventRepository.save(event);
@@ -154,7 +157,7 @@ public class EventPrivateServiceImpl implements EventPrivateService {
     }
 
     private Event getEventIfExists(Long eventId) {
-        String exceptionMessage = "Event with id=" + eventId + " was not found";
+        String exceptionMessage = String.format("Событие с id=%d не найдено", eventId);
 
         if (eventId == null) {
             throw new ValidationException(exceptionMessage);
@@ -165,14 +168,16 @@ public class EventPrivateServiceImpl implements EventPrivateService {
 
     private static void checkEventDate(LocalDateTime newEventDate) {
         if (newEventDate.isBefore(LocalDateTime.now())) {
-            throw new ValidationException("Дата и время на которые намечено событие не может быть раньше," +
-                    "чем через два часа от текущего момента");
+            throw new ValidationException(
+                    "Дата и время на которые намечено событие не может быть раньше," +
+                            "чем через два часа от текущего момента"
+            );
         }
     }
 
     private static void checkIfUserIsInitiator(Long userId, Long eventId, Event event) {
         if (!event.getInitiator().getId().equals(userId)) {
-            throw new EntityNotFoundException("Event with id=" + eventId + " was not found");
+            throw new EntityNotFoundException(String.format("Событие с id=%d не найдено", eventId));
         }
     }
 }

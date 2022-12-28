@@ -14,7 +14,7 @@ public class EventValidator {
     private final EventRepository eventRepository;
 
     public Event getEventIfExists(Long eventId) {
-        String exceptionMessage = "Event with id=" + eventId + " was not found";
+        String exceptionMessage = String.format("Событие с id=%d не найдено", eventId);
 
         if (eventId == null) {
             throw new ValidationException(exceptionMessage);

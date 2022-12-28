@@ -3,11 +3,10 @@ package ru.practicum.ewm.request.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.ewm.event.EventMapper;
 import ru.practicum.ewm.event.EventState;
+import ru.practicum.ewm.event.EventValidator;
 import ru.practicum.ewm.event.ParticipationStatus;
 import ru.practicum.ewm.event.model.Event;
-import ru.practicum.ewm.event.service.EventPrivateService;
 import ru.practicum.ewm.exception.EntityAlreadyExistsException;
 import ru.practicum.ewm.exception.ValidationException;
 import ru.practicum.ewm.request.ParticipationRequestMapper;
@@ -27,8 +26,9 @@ import java.util.List;
 public class ParticipationRequestPrivateServiceImpl implements ParticipationRequestPrivateService {
 
     private final ParticipationRequestRepository participationRequestRepository;
-    private final EventPrivateService eventPrivateService;
     private final UserAdminService userAdminService;
+
+    private final EventValidator eventValidator;
 
     @Override
     public List<ParticipationRequestDto> findUserParticipationRequests(Long userId) {
@@ -48,9 +48,7 @@ public class ParticipationRequestPrivateServiceImpl implements ParticipationRequ
             ));
         }
 
-        Event event = EventMapper.eventFullDtoToEvent(
-                eventPrivateService.findUserEventFullInfo(userId, eventId)
-        );
+        Event event = eventValidator.getEventIfExists(eventId);
 
         // инициатор события не может добавить запрос на участие в своём событии
         if (event.getInitiator().getId().equals(userId)) {

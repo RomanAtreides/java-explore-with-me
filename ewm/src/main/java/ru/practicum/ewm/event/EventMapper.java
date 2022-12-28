@@ -11,6 +11,7 @@ import ru.practicum.ewm.user.UserMapper;
 import ru.practicum.ewm.user.model.User;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Component
 public class EventMapper {
@@ -21,19 +22,21 @@ public class EventMapper {
             Category category,
             Long participationRequestsQuantity,
             Long views) {
+        LocalDateTime dateTime = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
+
         return Event.builder()
                 .id(null)
                 .annotation(newEventDto.getAnnotation())
                 .category(category)
                 .confirmedRequests(participationRequestsQuantity)
-                .createdOn(LocalDateTime.now())
+                .createdOn(dateTime)
                 .description(newEventDto.getDescription())
                 .eventDate(newEventDto.getEventDate())
                 .initiator(initiator)
                 .location(newEventDto.getLocation())
                 .paid(newEventDto.isPaid())
                 .participantLimit(newEventDto.getParticipantLimit())
-                .publishedOn(LocalDateTime.now()) // ???
+                .publishedOn(dateTime) // ???
                 .requestModeration(newEventDto.isRequestModeration())
                 .state(EventState.PENDING)
                 .title(newEventDto.getTitle())

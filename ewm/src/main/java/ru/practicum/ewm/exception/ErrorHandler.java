@@ -23,7 +23,7 @@ public class ErrorHandler {
         return new ApiError(
                 Arrays.asList(exception.getStackTrace()),
                 exception.getMessage(),
-                exception.getCause().getMessage(), // TODO: 27.12.2022 Заменить на строку
+                "Ошибка валидации",
                 HttpStatus.BAD_REQUEST.toString(),
                 LocalDateTime.now().format(formatter) // TODO: 27.12.2022 Удалить приведение к строке?
         );
@@ -36,7 +36,7 @@ public class ErrorHandler {
         return new ApiError(
                 Arrays.asList(exception.getStackTrace()),
                 exception.getMessage(),
-                exception.getCause().getMessage(), // TODO: 27.12.2022 Заменить на строку
+                "Ошибка доступа",
                 HttpStatus.FORBIDDEN.toString(),
                 LocalDateTime.now().format(formatter) // TODO: 27.12.2022 Удалить приведение к строке?
         );
@@ -49,7 +49,7 @@ public class ErrorHandler {
         return new ApiError(
                 Arrays.asList(exception.getStackTrace()),
                 exception.getMessage(),
-                "The required object was not found",
+                "Требуемый объект не найден",
                 HttpStatus.NOT_FOUND.toString(),
                 LocalDateTime.now().format(formatter) // TODO: 27.12.2022 Удалить приведение к строке?
         );
@@ -62,7 +62,7 @@ public class ErrorHandler {
         return new ApiError(
                 Arrays.asList(exception.getStackTrace()),
                 exception.getMessage(),
-                exception.getCause().getMessage(), // TODO: 27.12.2022 Заменить на строку
+                "Конфликт данных",
                 HttpStatus.CONFLICT.toString(),
                 LocalDateTime.now().format(formatter) // TODO: 27.12.2022 Удалить приведение к строке?
         );
@@ -75,7 +75,7 @@ public class ErrorHandler {
         return new ApiError(
                 Arrays.asList(exception.getStackTrace()),
                 exception.getMessage(),
-                exception.getCause().getMessage(), // TODO: 27.12.2022 Заменить на строку
+                "Ошибка сервера",
                 HttpStatus.INTERNAL_SERVER_ERROR.toString(),
                 LocalDateTime.now().format(formatter) // TODO: 27.12.2022 Удалить приведение к строке?
         );
