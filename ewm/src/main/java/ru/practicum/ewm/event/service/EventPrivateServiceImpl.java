@@ -18,6 +18,7 @@ import ru.practicum.ewm.event.repository.EventRepository;
 import ru.practicum.ewm.exception.AccessException;
 import ru.practicum.ewm.exception.EntityNotFoundException;
 import ru.practicum.ewm.exception.ValidationException;
+import ru.practicum.ewm.request.dto.ParticipationRequestDto;
 import ru.practicum.ewm.request.UpdateEventRequest;
 import ru.practicum.ewm.user.UserMapper;
 import ru.practicum.ewm.user.dto.UserDto;
@@ -145,6 +146,11 @@ public class EventPrivateServiceImpl implements EventPrivateService {
         event.setState(EventState.CANCELED);
         Event canceledEvent = eventRepository.save(event);
         return EventMapper.eventToEventFullDto(canceledEvent);
+    }
+
+    @Override
+    public List<ParticipationRequestDto> findUserEventParticipationRequests(Long userId, Long eventId) {
+        return null;
     }
 
     private Event getEventIfExists(Long eventId) {

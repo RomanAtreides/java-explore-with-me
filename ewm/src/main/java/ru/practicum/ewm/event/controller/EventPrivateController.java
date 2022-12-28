@@ -8,6 +8,7 @@ import ru.practicum.ewm.event.dto.EventFullDto;
 import ru.practicum.ewm.event.dto.EventShortDto;
 import ru.practicum.ewm.event.dto.NewEventDto;
 import ru.practicum.ewm.event.service.EventPrivateService;
+import ru.practicum.ewm.request.dto.ParticipationRequestDto;
 import ru.practicum.ewm.request.UpdateEventRequest;
 import ru.practicum.ewm.utility.marker.Create;
 import ru.practicum.ewm.utility.marker.Update;
@@ -71,4 +72,11 @@ public class EventPrivateController {
     }
 
     // Private: Events - Получение информации о запросах на участие в событии текущего пользователя
+    @GetMapping("/{eventId}/requests")
+    public List<ParticipationRequestDto> findUserParticipationRequests(
+            @PathVariable Long userId,
+            @PathVariable Long eventId) {
+        log.info("Получение информации о запросах на участие в событии с id={} пользователем с id={}", eventId, userId);
+        return eventPrivateService.findUserEventParticipationRequests(userId, eventId);
+    }
 }
