@@ -21,4 +21,8 @@ public interface EventPrivateService {
     EventFullDto cancelUserEvent(Long userId, Long eventId);
 
     List<ParticipationRequestDto> findUserEventParticipationRequests(Long userId, Long eventId);
+
+    ParticipationRequestDto confirmParticipationRequest(Long userId, Long eventId, Long reqId);
+
+    ParticipationRequestDto rejectParticipationRequest(Long userId, Long eventId, Long reqId);
 }

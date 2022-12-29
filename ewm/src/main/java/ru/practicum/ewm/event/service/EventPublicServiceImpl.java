@@ -21,7 +21,16 @@ public class EventPublicServiceImpl implements EventPublicService {
     private final EventValidator validator;
 
     @Override
-    public List<EventShortDto> findFilteredEvents(String text, Long[] categories, Boolean paid, String rangeStart, String rangeEnd, Boolean onlyAvailable, String sort, Integer from, Integer size) {
+    public List<EventShortDto> findFilteredEvents(
+            String text,
+            Long[] categories,
+            Boolean paid,
+            String rangeStart,
+            String rangeEnd,
+            Boolean onlyAvailable,
+            String sort,
+            Integer from,
+            Integer size) {
         return null;
     }
 

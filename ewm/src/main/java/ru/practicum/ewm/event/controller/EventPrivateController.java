@@ -38,7 +38,11 @@ public class EventPrivateController {
     public EventFullDto changeEvent(
             @PathVariable Long userId,
             @Validated(Update.class) @RequestBody UpdateEventRequest updateEventRequest) {
-        log.info("Изменение события с id={} добавленного пользователем с id={}", updateEventRequest.getEventId(), userId);
+        log.info(
+                "Изменение события с id={} добавленного пользователем с id={}",
+                updateEventRequest.getEventId(),
+                userId
+        );
         return eventPrivateService.changeEvent(userId, updateEventRequest);
     }
 
@@ -76,7 +80,41 @@ public class EventPrivateController {
     public List<ParticipationRequestDto> findUserParticipationRequests(
             @PathVariable Long userId,
             @PathVariable Long eventId) {
-        log.info("Получение информации о запросах на участие в событии с id={} пользователем с id={}", eventId, userId);
+        log.info(
+                "Получение информации о запросах на участие в событии с id={} пользователем с id={}",
+                eventId,
+                userId
+        );
         return eventPrivateService.findUserEventParticipationRequests(userId, eventId);
+    }
+
+    // Private: Events - Подтверждение чужой заявки на участие в событии текущего пользователя
+    @PatchMapping("/{eventId}/requests/{reqId}/confirm")
+    public ParticipationRequestDto confirmParticipationRequest(
+            @PathVariable Long userId,
+            @PathVariable Long eventId,
+            @PathVariable Long reqId) {
+        log.info(
+                "Подтверждение чужой заявки с id={} на участие в событии с id={} пользователя с id={}",
+                reqId,
+                eventId,
+                userId
+        );
+        return eventPrivateService.confirmParticipationRequest(userId, eventId, reqId);
+    }
+
+    // Private: Events - Отклонение чужой заявки на участие в событии текущего пользователя
+    @PatchMapping("/{eventId}/requests/{reqId}/reject")
+    public ParticipationRequestDto rejectParticipationRequest (
+            @PathVariable Long userId,
+            @PathVariable Long eventId,
+            @PathVariable Long reqId) {
+        log.info(
+                "Отклонение чужой заявки с id={} на участие в событии с id={} пользователя с id={}",
+                userId,
+                eventId,
+                reqId
+        );
+        return eventPrivateService.rejectParticipationRequest(userId, eventId, reqId);
     }
 }

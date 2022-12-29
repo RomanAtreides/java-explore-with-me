@@ -10,6 +10,7 @@ import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.category.service.CategoryPublicService;
 import ru.practicum.ewm.event.EventMapper;
 import ru.practicum.ewm.event.EventState;
+import ru.practicum.ewm.event.ParticipationStatus;
 import ru.practicum.ewm.event.dto.EventFullDto;
 import ru.practicum.ewm.event.dto.EventShortDto;
 import ru.practicum.ewm.event.dto.NewEventDto;
@@ -18,8 +19,11 @@ import ru.practicum.ewm.event.repository.EventRepository;
 import ru.practicum.ewm.exception.AccessException;
 import ru.practicum.ewm.exception.EntityNotFoundException;
 import ru.practicum.ewm.exception.ValidationException;
-import ru.practicum.ewm.request.dto.ParticipationRequestDto;
+import ru.practicum.ewm.request.ParticipationRequestMapper;
 import ru.practicum.ewm.request.UpdateEventRequest;
+import ru.practicum.ewm.request.dto.ParticipationRequestDto;
+import ru.practicum.ewm.request.model.ParticipationRequest;
+import ru.practicum.ewm.request.repository.ParticipationRequestRepository;
 import ru.practicum.ewm.user.UserMapper;
 import ru.practicum.ewm.user.dto.UserDto;
 import ru.practicum.ewm.user.model.User;
@@ -38,6 +42,7 @@ public class EventPrivateServiceImpl implements EventPrivateService {
     private final EventRepository eventRepository;
     private final UserAdminService userAdminService;
     private final CategoryPublicService categoryPublicService;
+    private final ParticipationRequestRepository participationRequestRepository;
 
     @Override
     public List<EventShortDto> findUserEvents(Long userId, Integer from, Integer size) {
@@ -138,6 +143,7 @@ public class EventPrivateServiceImpl implements EventPrivateService {
     }
 
     @Override
+    @Transactional
     public EventFullDto cancelUserEvent(Long userId, Long eventId) {
         Event event = getEventIfExists(eventId);
 
@@ -156,6 +162,49 @@ public class EventPrivateServiceImpl implements EventPrivateService {
         return null;
     }
 
+    @Override
+    public ParticipationRequestDto confirmParticipationRequest(Long userId, Long eventId, Long reqId) {
+        ParticipationRequest request = participationRequestRepository.findById(reqId)
+                .orElseThrow(() -> new EntityNotFoundException(String.format(
+                        "Заявка на участие с id=%d не найдена", reqId
+                )));
+
+        Event event = request.getEvent();
+        Integer limit = event.getParticipantLimit();
+        boolean requestModeration = event.isRequestModeration();
+
+        // если для события лимит заявок равен 0 или отключена пре-модерация заявок,
+        // то подтверждение заявок не требуется
+        if (limit == 0 || !requestModeration) {
+            request.setStatus(ParticipationStatus.DOES_NOT_REQUIRE_CONFIRMATION);
+        }
+
+        // нельзя подтвердить заявку, если уже достигнут лимит по заявкам на данное событие
+        if (event.getConfirmedRequests() + 1 > limit) {
+            request.setStatus(ParticipationStatus.CANCELED);
+        }
+        request.setStatus(ParticipationStatus.CONFIRMED);
+
+        // если при подтверждении данной заявки, лимит заявок для события исчерпан,
+        // то все неподтверждённые заявки необходимо отклонить
+        if (event.getConfirmedRequests() + 1 == limit) {
+            List<ParticipationRequest> requests = participationRequestRepository
+                    .findParticipationRequestByEventId(eventId).stream()
+                    .filter(r -> r.getStatus().equals(ParticipationStatus.PENDING))
+                    .peek(r -> r.setStatus(ParticipationStatus.CANCELED))
+                    .collect(Collectors.toList());
+
+            participationRequestRepository.saveAll(requests);
+        }
+        ParticipationRequest consideredRequest = participationRequestRepository.save(request);
+        return ParticipationRequestMapper.toParticipationRequestDto(consideredRequest);
+    }
+
+    @Override
+    public ParticipationRequestDto rejectParticipationRequest(Long userId, Long eventId, Long reqId) {
+        return null;
+    }
+
     private Event getEventIfExists(Long eventId) {
         String exceptionMessage = String.format("Событие с id=%d не найдено", eventId);
 
@@ -170,7 +219,7 @@ public class EventPrivateServiceImpl implements EventPrivateService {
         if (newEventDate.isBefore(LocalDateTime.now())) {
             throw new ValidationException(
                     "Дата и время на которые намечено событие не может быть раньше," +
-                            "чем через два часа от текущего момента"
+                    "чем через два часа от текущего момента"
             );
         }
     }
