@@ -2,10 +2,10 @@ package ru.practicum.ewm.event;
 
 public enum ParticipationStatus {
 
-    CANCELED,                       // Отменена
     CONFIRMED,                      // Подтверждена
     DOES_NOT_REQUIRE_CONFIRMATION,  // Не требует подтверждения
-    PENDING;                        // На рассмотрении
+    PENDING,                        // На рассмотрении
+    REJECTED;                       // Отменена
 
     public static ParticipationStatus from(String status) {
         for (ParticipationStatus value : ParticipationStatus.values()) {

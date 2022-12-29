@@ -160,16 +160,17 @@ public class EventPrivateServiceImpl implements EventPrivateService {
 
     @Override
     public List<ParticipationRequestDto> findUserEventParticipationRequests(Long userId, Long eventId) {
-        return null;
+        List<ParticipationRequest> requests = participationRequestRepository.findParticipationRequestsByEventId(eventId);
+        
+        return requests.stream()
+                .map(ParticipationRequestMapper::toParticipationRequestDto)
+                .collect(Collectors.toList());
     }
 
     @Override
     @Transactional
     public Map<Long, ParticipationRequestDto> confirmParticipationRequest(Long userId, Long eventId, Long reqId) {
-        ParticipationRequest request = participationRequestRepository.findById(reqId)
-                .orElseThrow(() -> new EntityNotFoundException(String.format(
-                        "Заявка на участие с id=%d не найдена", reqId
-                )));
+        ParticipationRequest request = getParticipationRequestIfExists(reqId);
 
         if (request.getStatus().equals(ParticipationStatus.CONFIRMED)) {
             throw new ValidationException(String.format("Заявка с id=%d уже подтверждена", reqId));
@@ -189,7 +190,7 @@ public class EventPrivateServiceImpl implements EventPrivateService {
 
         // нельзя подтвердить заявку, если уже достигнут лимит по заявкам на данное событие
         if (confirmedRequests + 1 > limit) {
-            request.setStatus(ParticipationStatus.CANCELED);
+            request.setStatus(ParticipationStatus.REJECTED);
             return Map.of(canceledRequestsQuantity, ParticipationRequestMapper.toParticipationRequestDto(request));
         }
         request.setStatus(ParticipationStatus.CONFIRMED);
@@ -200,17 +201,27 @@ public class EventPrivateServiceImpl implements EventPrivateService {
         if (confirmedRequests + 1 == limit) {
             canceledRequestsQuantity = participationRequestRepository.findParticipationRequestsByEventId(eventId).stream()
                     .filter(r -> r.getStatus().equals(ParticipationStatus.PENDING))
-                    .peek(r -> r.setStatus(ParticipationStatus.CANCELED))
+                    .peek(r -> r.setStatus(ParticipationStatus.REJECTED))
                     .count();
         }
         ParticipationRequest consideredRequest = participationRequestRepository.save(request);
+
         return Map.of(canceledRequestsQuantity, ParticipationRequestMapper.toParticipationRequestDto(consideredRequest));
     }
 
     @Override
     @Transactional
     public ParticipationRequestDto rejectParticipationRequest(Long userId, Long eventId, Long reqId) {
-        return null;
+        ParticipationRequest request = getParticipationRequestIfExists(reqId);
+
+        if (request.getStatus().equals(ParticipationStatus.REJECTED)) {
+            throw new ValidationException(String.format("Заявка с id=%d уже отменена", reqId));
+        }
+        request.setStatus(ParticipationStatus.REJECTED);
+
+        ParticipationRequest canceledRequest = participationRequestRepository.save(request);
+
+        return ParticipationRequestMapper.toParticipationRequestDto(canceledRequest);
     }
 
     private Event getEventIfExists(Long eventId) {
@@ -221,6 +232,13 @@ public class EventPrivateServiceImpl implements EventPrivateService {
         }
         return eventRepository.findById(eventId)
                 .orElseThrow(() -> new EntityNotFoundException(exceptionMessage));
+    }
+
+    private ParticipationRequest getParticipationRequestIfExists(Long reqId) {
+        return participationRequestRepository.findById(reqId)
+                .orElseThrow(() -> new EntityNotFoundException(String.format(
+                        "Заявка на участие с id=%d не найдена", reqId
+                )));
     }
 
     private static void checkEventDate(LocalDateTime newEventDate) {
