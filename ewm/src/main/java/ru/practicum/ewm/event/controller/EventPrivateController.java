@@ -14,6 +14,7 @@ import ru.practicum.ewm.utility.marker.Create;
 import ru.practicum.ewm.utility.marker.Update;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -100,12 +101,16 @@ public class EventPrivateController {
                 eventId,
                 userId
         );
-        return eventPrivateService.confirmParticipationRequest(userId, eventId, reqId);
+        Map<Long, ParticipationRequestDto> map = eventPrivateService.confirmParticipationRequest(userId, eventId, reqId);
+        Long key = map.keySet().stream().findFirst().orElse(0L);
+
+        log.info(String.format("Количество отменённых заявок=%d", key));
+        return map.get(key);
     }
 
     // Private: Events - Отклонение чужой заявки на участие в событии текущего пользователя
     @PatchMapping("/{eventId}/requests/{reqId}/reject")
-    public ParticipationRequestDto rejectParticipationRequest (
+    public ParticipationRequestDto rejectParticipationRequest(
             @PathVariable Long userId,
             @PathVariable Long eventId,
             @PathVariable Long reqId) {

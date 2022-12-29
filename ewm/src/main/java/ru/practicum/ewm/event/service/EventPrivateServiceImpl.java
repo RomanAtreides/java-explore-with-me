@@ -32,6 +32,7 @@ import ru.practicum.ewm.utility.FromSizeRequest;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -163,44 +164,51 @@ public class EventPrivateServiceImpl implements EventPrivateService {
     }
 
     @Override
-    public ParticipationRequestDto confirmParticipationRequest(Long userId, Long eventId, Long reqId) {
+    @Transactional
+    public Map<Long, ParticipationRequestDto> confirmParticipationRequest(Long userId, Long eventId, Long reqId) {
         ParticipationRequest request = participationRequestRepository.findById(reqId)
                 .orElseThrow(() -> new EntityNotFoundException(String.format(
                         "Заявка на участие с id=%d не найдена", reqId
                 )));
 
+        if (request.getStatus().equals(ParticipationStatus.CONFIRMED)) {
+            throw new ValidationException(String.format("Заявка с id=%d уже подтверждена", reqId));
+        }
+
         Event event = request.getEvent();
         Integer limit = event.getParticipantLimit();
-        boolean requestModeration = event.isRequestModeration();
+        Long confirmedRequests = event.getConfirmedRequests();
+        Long canceledRequestsQuantity = 0L;
 
         // если для события лимит заявок равен 0 или отключена пре-модерация заявок,
         // то подтверждение заявок не требуется
-        if (limit == 0 || !requestModeration) {
+        if (limit == 0 || !event.isRequestModeration()) {
             request.setStatus(ParticipationStatus.DOES_NOT_REQUIRE_CONFIRMATION);
+            return Map.of(canceledRequestsQuantity, ParticipationRequestMapper.toParticipationRequestDto(request));
         }
 
         // нельзя подтвердить заявку, если уже достигнут лимит по заявкам на данное событие
-        if (event.getConfirmedRequests() + 1 > limit) {
+        if (confirmedRequests + 1 > limit) {
             request.setStatus(ParticipationStatus.CANCELED);
+            return Map.of(canceledRequestsQuantity, ParticipationRequestMapper.toParticipationRequestDto(request));
         }
         request.setStatus(ParticipationStatus.CONFIRMED);
+        event.setConfirmedRequests(confirmedRequests + 1);
 
         // если при подтверждении данной заявки, лимит заявок для события исчерпан,
         // то все неподтверждённые заявки необходимо отклонить
-        if (event.getConfirmedRequests() + 1 == limit) {
-            List<ParticipationRequest> requests = participationRequestRepository
-                    .findParticipationRequestByEventId(eventId).stream()
+        if (confirmedRequests + 1 == limit) {
+            canceledRequestsQuantity = participationRequestRepository.findParticipationRequestsByEventId(eventId).stream()
                     .filter(r -> r.getStatus().equals(ParticipationStatus.PENDING))
                     .peek(r -> r.setStatus(ParticipationStatus.CANCELED))
-                    .collect(Collectors.toList());
-
-            participationRequestRepository.saveAll(requests);
+                    .count();
         }
         ParticipationRequest consideredRequest = participationRequestRepository.save(request);
-        return ParticipationRequestMapper.toParticipationRequestDto(consideredRequest);
+        return Map.of(canceledRequestsQuantity, ParticipationRequestMapper.toParticipationRequestDto(consideredRequest));
     }
 
     @Override
+    @Transactional
     public ParticipationRequestDto rejectParticipationRequest(Long userId, Long eventId, Long reqId) {
         return null;
     }

@@ -7,6 +7,7 @@ import ru.practicum.ewm.request.dto.ParticipationRequestDto;
 import ru.practicum.ewm.request.UpdateEventRequest;
 
 import java.util.List;
+import java.util.Map;
 
 public interface EventPrivateService {
 
@@ -22,7 +23,7 @@ public interface EventPrivateService {
 
     List<ParticipationRequestDto> findUserEventParticipationRequests(Long userId, Long eventId);
 
-    ParticipationRequestDto confirmParticipationRequest(Long userId, Long eventId, Long reqId);
+    Map<Long, ParticipationRequestDto> confirmParticipationRequest(Long userId, Long eventId, Long reqId);
 
     ParticipationRequestDto rejectParticipationRequest(Long userId, Long eventId, Long reqId);
 }
