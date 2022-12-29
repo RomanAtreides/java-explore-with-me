@@ -2,9 +2,11 @@ package ru.practicum.ewm.user.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.user.dto.UserDto;
 import ru.practicum.ewm.user.service.UserAdminService;
+import ru.practicum.ewm.utility.marker.Create;
 
 import java.util.List;
 
@@ -28,7 +30,7 @@ public class UserAdminController {
 
     // Admin: Users - Добавление нового пользователя
     @PostMapping
-    public UserDto addNewUser(@RequestBody UserDto userDto) {
+    public UserDto addNewUser(@RequestBody @Validated(Create.class) UserDto userDto) {
         UserDto newUserDto = userService.addNewUser(userDto);
 
         log.info("Добавление нового пользователя {}", newUserDto);

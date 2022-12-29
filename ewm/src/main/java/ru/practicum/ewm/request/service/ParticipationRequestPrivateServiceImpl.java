@@ -19,6 +19,7 @@ import ru.practicum.ewm.user.service.UserAdminService;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +33,12 @@ public class ParticipationRequestPrivateServiceImpl implements ParticipationRequ
 
     @Override
     public List<ParticipationRequestDto> findUserParticipationRequests(Long userId) {
-        return null;
+        List<ParticipationRequest> requests = participationRequestRepository
+                .findUserParticipationRequests(userId);
+
+        return requests.stream()
+                .map(ParticipationRequestMapper::toParticipationRequestDto)
+                .collect(Collectors.toList());
     }
 
     @Override

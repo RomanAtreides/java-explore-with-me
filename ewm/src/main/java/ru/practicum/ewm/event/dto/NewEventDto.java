@@ -10,6 +10,7 @@ import ru.practicum.ewm.event.model.Location;
 import ru.practicum.ewm.utility.marker.Create;
 
 import javax.validation.constraints.Future;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
@@ -21,6 +22,7 @@ import java.time.LocalDateTime;
 public class NewEventDto {
 
     @Size(min = 20, max = 2000, groups = Create.class)
+    @NotNull(groups = Create.class)
     private String annotation; // Краткое описание; maxLength: 2000, minLength: 20; example: Сплав на байдарках похож на полет
 
     private Long category; // id категории к которой относится событие
@@ -53,7 +55,7 @@ public class NewEventDto {
         return "NewEventDto{" +
                 "annotation length='" + annotation.length() + '\'' +
                 ", category=" + category +
-                ", description length='" + description.length() + '\'' +
+                ", description length='" + (description != null ? description.length() : 0) + '\'' +
                 ", eventDate='" + eventDate + '\'' +
                 ", location=" + location +
                 ", paid=" + paid +

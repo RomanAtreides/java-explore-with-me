@@ -3,11 +3,14 @@ package ru.practicum.ewm.event.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.ewm.category.CategoryMapper;
+import ru.practicum.ewm.category.service.CategoryPublicService;
 import ru.practicum.ewm.event.EventMapper;
 import ru.practicum.ewm.event.EventState;
 import ru.practicum.ewm.event.EventValidator;
 import ru.practicum.ewm.event.dto.EventFullDto;
 import ru.practicum.ewm.event.model.Event;
+import ru.practicum.ewm.event.model.Location;
 import ru.practicum.ewm.event.repository.EventRepository;
 import ru.practicum.ewm.exception.ValidationException;
 import ru.practicum.ewm.request.AdminUpdateEventRequest;
@@ -22,6 +25,7 @@ public class EventAdminServiceImpl implements EventAdminService {
 
     private final EventValidator eventValidator;
     private final EventRepository eventRepository;
+    private final CategoryPublicService categoryPublicService;
 
     @Override
     @Transactional(readOnly = true)
@@ -40,7 +44,59 @@ public class EventAdminServiceImpl implements EventAdminService {
     @Override
     public EventFullDto changeEvent(Long eventId, AdminUpdateEventRequest request) {
         // Редактирование данных любого события администратором. Валидация данных не требуется
-        return null;
+        Event event = eventValidator.getEventIfExists(eventId);
+
+        String newAnnotation = request.getAnnotation();
+        Long newCategory = request.getCategory();
+        String newDescription = request.getDescription();
+        LocalDateTime newDateTime = request.getEventDate();
+        Location newLocation = request.getLocation();
+        Boolean newPaid = request.getPaid();
+        Integer newParticipantLimit = request.getParticipantLimit();
+        Boolean newRequestModeration = request.getRequestModeration();
+        String newTitle = request.getTitle();
+
+        if (newAnnotation != null) {
+            event.setAnnotation(newAnnotation);
+        }
+
+        if (newCategory != null) {
+            event.setCategory(CategoryMapper.categoryDtoToCategory(
+                    categoryPublicService.findCategoryById(newCategory)
+            ));
+        }
+
+        if (newDescription != null) {
+            event.setDescription(request.getDescription());
+        }
+
+        if (newDateTime != null) {
+            event.setEventDate(request.getEventDate());
+        }
+
+        if (newLocation != null) {
+            event.setLocation(request.getLocation());
+        }
+
+        if (newPaid != null) {
+            event.setPaid(request.getPaid());
+        }
+
+        if (newParticipantLimit != null) {
+            event.setParticipantLimit(request.getParticipantLimit());
+        }
+
+        if (newRequestModeration != null) {
+            event.setRequestModeration(request.getRequestModeration());
+        }
+
+        if (newTitle != null) {
+            event.setTitle(request.getTitle());
+        }
+
+        Event entity = eventRepository.save(event);
+
+        return EventMapper.eventToEventFullDto(entity);
     }
 
     @Override
@@ -68,7 +124,15 @@ public class EventAdminServiceImpl implements EventAdminService {
 
     @Override
     public EventFullDto rejectEvent(Long eventId) {
+        Event event = eventValidator.getEventIfExists(eventId);
+
         // Обратите внимание: событие не должно быть опубликовано
-        return null;
+        if (event.getState().equals(EventState.PUBLISHED)) {
+            throw new ValidationException(String.format(
+                    "Событие с id=%d должно быть в состоянии ожидания публикации", eventId));
+        }
+        event.setState(EventState.CANCELED);
+        Event entity = eventRepository.save(event);
+        return EventMapper.eventToEventFullDto(entity);
     }
 }

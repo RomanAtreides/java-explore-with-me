@@ -5,16 +5,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.practicum.ewm.utility.Common;
 
+import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 
 @Slf4j
 @RestControllerAdvice("ru.practicum.ewm")
 public class ErrorHandler {
-
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -25,7 +24,7 @@ public class ErrorHandler {
                 exception.getMessage(),
                 "Ошибка валидации",
                 HttpStatus.BAD_REQUEST.toString(),
-                LocalDateTime.now().format(formatter) // TODO: 27.12.2022 Удалить приведение к строке?
+                LocalDateTime.now().format(Common.FORMATTER)
         );
     }
 
@@ -38,7 +37,7 @@ public class ErrorHandler {
                 exception.getMessage(),
                 "Ошибка доступа",
                 HttpStatus.FORBIDDEN.toString(),
-                LocalDateTime.now().format(formatter) // TODO: 27.12.2022 Удалить приведение к строке?
+                LocalDateTime.now().format(Common.FORMATTER)
         );
     }
 
@@ -51,20 +50,20 @@ public class ErrorHandler {
                 exception.getMessage(),
                 "Требуемый объект не найден",
                 HttpStatus.NOT_FOUND.toString(),
-                LocalDateTime.now().format(formatter) // TODO: 27.12.2022 Удалить приведение к строке?
+                LocalDateTime.now().format(Common.FORMATTER)
         );
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ApiError handleRequestConflictException(final RequestConflictException exception) {
+    public ApiError handleRequestConflictException(final SQLException exception) {
         log.debug("409 {}", exception.getMessage(), exception);
         return new ApiError(
                 Arrays.asList(exception.getStackTrace()),
                 exception.getMessage(),
                 "Конфликт данных",
                 HttpStatus.CONFLICT.toString(),
-                LocalDateTime.now().format(formatter) // TODO: 27.12.2022 Удалить приведение к строке?
+                LocalDateTime.now().format(Common.FORMATTER)
         );
     }
 
@@ -77,7 +76,7 @@ public class ErrorHandler {
                 exception.getMessage(),
                 "Ошибка сервера",
                 HttpStatus.INTERNAL_SERVER_ERROR.toString(),
-                LocalDateTime.now().format(formatter) // TODO: 27.12.2022 Удалить приведение к строке?
+                LocalDateTime.now().format(Common.FORMATTER)
         );
     }
 }

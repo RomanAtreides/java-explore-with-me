@@ -161,7 +161,7 @@ public class EventPrivateServiceImpl implements EventPrivateService {
     @Override
     public List<ParticipationRequestDto> findUserEventParticipationRequests(Long userId, Long eventId) {
         List<ParticipationRequest> requests = participationRequestRepository.findParticipationRequestsByEventId(eventId);
-        
+
         return requests.stream()
                 .map(ParticipationRequestMapper::toParticipationRequestDto)
                 .collect(Collectors.toList());
