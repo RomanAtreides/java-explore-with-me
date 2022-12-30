@@ -7,4 +7,10 @@ public interface CompilationAdminService {
     CompilationDto addNewCompilation(NewCompilationDto newCompilationDto);
 
     void deleteCompilation(Long compId);
+
+    void deleteEventFromCompilation(Long compId, Long eventId);
+
+    void addEventToCompilation(Long compId, Long eventId);
+
+    void pinOrUnpinCompilation(Long compId, boolean isPinned);
 }

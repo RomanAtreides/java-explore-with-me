@@ -39,4 +39,21 @@ public class CompilationAdminServiceImpl implements CompilationAdminService {
         Compilation compilation = compilationValidator.findCompilationIfExists(compId);
         compilationRepository.delete(compilation);
     }
+
+    @Override
+    public void deleteEventFromCompilation(Long compId, Long eventId) {
+        eventRepository.deleteById(eventId); // TODO: 30.12.2022 Закончить метод
+    }
+
+    @Override
+    public void addEventToCompilation(Long compId, Long eventId) {
+        // TODO: 30.12.2022 Закончить метод
+    }
+
+    @Override
+    public void pinOrUnpinCompilation(Long compId, boolean isPinned) {
+        Compilation compilation = compilationValidator.findCompilationIfExists(compId);
+        compilation.setPinned(isPinned);
+        compilationRepository.save(compilation);
+    }
 }
