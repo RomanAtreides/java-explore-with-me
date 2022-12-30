@@ -62,13 +62,13 @@ public class Event {
     private boolean paid; // Нужно ли оплачивать участие
 
     @Column(name = "participant_limit")
-    private Integer participantLimit; // default: 0; Ограничение на количество участников. Значение 0 - означает отсутствие ограничения
+    private Integer participantLimit; // Default: 0; Ограничение на количество участников. Значение 0 - означает отсутствие ограничения
 
     @Column(name = "published_on")
     private LocalDateTime publishedOn; // Дата и время публикации события (в формате "yyyy-MM-dd HH:mm:ss"); example: 2022-09-06 15:10:05
 
     @Column(name = "request_moderation")
-    private boolean requestModeration; // default: true; Нужна ли пре-модерация заявок на участие
+    private boolean requestModeration; // Default: true; Нужна ли пре-модерация заявок на участие
 
     @Enumerated(EnumType.STRING)
     private EventState state; // Список состояний жизненного цикла события; example: PUBLISHED; Enum: [ PENDING, PUBLISHED, CANCELED ]
