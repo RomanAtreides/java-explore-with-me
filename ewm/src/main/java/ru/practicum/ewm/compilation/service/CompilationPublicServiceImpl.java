@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 public class CompilationPublicServiceImpl implements CompilationPublicService {
 
     private final CompilationRepository compilationRepository;
-
     private final CompilationValidator compilationValidator;
 
     @Override

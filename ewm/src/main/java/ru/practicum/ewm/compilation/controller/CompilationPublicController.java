@@ -29,7 +29,7 @@ public class CompilationPublicController {
     // Получение подборки событий по её идентификатору
     @GetMapping("/{compId}")
     public CompilationDto findCompilationById(@PathVariable Long compId) {
-        log.info("Получение подборки событий по её id");
+        log.info("Получение подборки событий с id={}", compId);
         return compilationPublicService.findCompilationById(compId);
     }
 }
