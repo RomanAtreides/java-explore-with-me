@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.compilation.CompilationMapper;
+import ru.practicum.ewm.compilation.CompilationValidator;
 import ru.practicum.ewm.compilation.dto.CompilationDto;
 import ru.practicum.ewm.compilation.dto.NewCompilationDto;
 import ru.practicum.ewm.compilation.model.Compilation;
@@ -21,6 +22,8 @@ public class CompilationAdminServiceImpl implements CompilationAdminService {
     private final CompilationRepository compilationRepository;
     private final EventRepository eventRepository;
 
+    private final CompilationValidator compilationValidator;
+
     @Override
     public CompilationDto addNewCompilation(NewCompilationDto newCompilationDto) {
         Set<Long> eventIds = newCompilationDto.getEvents();
@@ -29,5 +32,11 @@ public class CompilationAdminServiceImpl implements CompilationAdminService {
         final Compilation entity = compilationRepository.save(compilation);
 
         return CompilationMapper.compilationToCompilationDto(entity);
+    }
+
+    @Override
+    public void deleteCompilation(Long compId) {
+        Compilation compilation = compilationValidator.findCompilationIfExists(compId);
+        compilationRepository.delete(compilation);
     }
 }

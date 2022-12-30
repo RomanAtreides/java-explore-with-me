@@ -50,7 +50,7 @@ public class UserAdminServiceImpl implements UserAdminService {
     }
 
     private User getUserIfExists(Long userId) {
-        String exceptionMessage = "User with id=" + userId + " was not found";
+        String exceptionMessage = String.format("Пользователь с id=%d не найден", userId);
 
         if (userId == null) {
             throw new ValidationException(exceptionMessage);

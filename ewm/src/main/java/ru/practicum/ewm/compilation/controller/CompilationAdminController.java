@@ -3,10 +3,7 @@ package ru.practicum.ewm.compilation.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.compilation.dto.CompilationDto;
 import ru.practicum.ewm.compilation.dto.NewCompilationDto;
 import ru.practicum.ewm.compilation.service.CompilationAdminService;
@@ -26,5 +23,12 @@ public class CompilationAdminController {
             @Validated(Create.class) @RequestBody NewCompilationDto newCompilationDto) {
         log.info("Добавление новой подборки {}", newCompilationDto);
         return compilationAdminService.addNewCompilation(newCompilationDto);
+    }
+
+    // Удаление подборки
+    @DeleteMapping("/{compId}")
+    public void deleteCompilation(@PathVariable Long compId) {
+        log.info("Удаление подборки  с id={}", compId);
+        compilationAdminService.deleteCompilation(compId);
     }
 }
