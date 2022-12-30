@@ -46,7 +46,7 @@ public class CompilationAdminController {
         compilationAdminService.addEventToCompilation(compId, eventId);
     }
 
-    // Открепить подборку на главной странице
+    // Открепить подборку от главной страницы
     @DeleteMapping("/{compId}/pin")
     public void unpinCompilation(@PathVariable Long compId) {
         log.info("Открепление подборки с id={} от главной страницы", compId);

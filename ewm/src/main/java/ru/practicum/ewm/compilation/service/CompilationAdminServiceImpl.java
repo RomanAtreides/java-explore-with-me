@@ -12,6 +12,8 @@ import ru.practicum.ewm.compilation.repository.CompilationRepository;
 import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.event.repository.EventRepository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.util.Set;
 
 @Service
@@ -21,8 +23,8 @@ public class CompilationAdminServiceImpl implements CompilationAdminService {
 
     private final CompilationRepository compilationRepository;
     private final EventRepository eventRepository;
-
     private final CompilationValidator compilationValidator;
+    private final EntityManager entityManager;
 
     @Override
     public CompilationDto addNewCompilation(NewCompilationDto newCompilationDto) {
@@ -36,23 +38,33 @@ public class CompilationAdminServiceImpl implements CompilationAdminService {
 
     @Override
     public void deleteCompilation(Long compId) {
-        Compilation compilation = compilationValidator.findCompilationIfExists(compId);
+        final Compilation compilation = compilationValidator.findCompilationIfExists(compId);
+
         compilationRepository.delete(compilation);
     }
 
     @Override
     public void deleteEventFromCompilation(Long compId, Long eventId) {
-        eventRepository.deleteById(eventId); // TODO: 30.12.2022 Закончить метод
+        Query query = entityManager.createNativeQuery(
+                "DELETE FROM compilation_of_events WHERE compilation_id = ?1 AND event_id = ?2"
+        );
+
+        query.setParameter(1, compId).setParameter(2, eventId).executeUpdate();
     }
 
     @Override
     public void addEventToCompilation(Long compId, Long eventId) {
-        // TODO: 30.12.2022 Закончить метод
+        Query query = entityManager.createNativeQuery(
+                "INSERT INTO compilation_of_events (compilation_id, event_id) VALUES (?1, ?2)"
+        );
+
+        query.setParameter(1, compId).setParameter(2, eventId).executeUpdate();
     }
 
     @Override
     public void pinOrUnpinCompilation(Long compId, boolean isPinned) {
-        Compilation compilation = compilationValidator.findCompilationIfExists(compId);
+        final Compilation compilation = compilationValidator.findCompilationIfExists(compId);
+
         compilation.setPinned(isPinned);
         compilationRepository.save(compilation);
     }
