@@ -39,8 +39,8 @@ public class StatsController {
     }
 
     // TEST
-    @GetMapping("/stats/test")
+    @GetMapping("/test")
     public String getTestString() {
-        return "Test string for WebClient";
+        return "Test string for WebClient from Stats app. Test 3";
     }
 }

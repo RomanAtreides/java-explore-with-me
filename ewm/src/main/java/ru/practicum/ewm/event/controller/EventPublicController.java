@@ -3,7 +3,6 @@ package ru.practicum.ewm.event.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.reactive.function.client.WebClient;
 import ru.practicum.ewm.event.dto.EventFullDto;
 import ru.practicum.ewm.event.dto.EventShortDto;
 import ru.practicum.ewm.event.service.EventPublicService;
@@ -16,8 +15,6 @@ import java.util.List;
 @RequestMapping("/events")
 public class EventPublicController {
 
-    private final WebClient.Builder webClient;
-
     private final EventPublicService eventPublicService;
 
     // Из ТЗ:
@@ -25,7 +22,7 @@ public class EventPublicController {
     // или полной информации о мероприятии
     // должен фиксироваться сервисом статистики
 
-    // Сохранять статистику нужно будет по двум ручкам:
+    // Ручки для сохранения статистики:
     // * GET /events, который отвечает за получение событий с возможностью фильтрации.
     // * GET /events/{id}, который позволяет получить подробную информацию об опубликованном событии по его идентификатору.
 
@@ -64,18 +61,5 @@ public class EventPublicController {
     public EventFullDto findFullEventInfo(@PathVariable Long id) {
         log.info("Получение подробной информации об опубликованном событии с id={}", id);
         return eventPublicService.findFullEventInfo(id);
-    }
-
-    // TEST
-    @GetMapping("/test")
-    public String test() {
-        String s = webClient.build()
-                .get()
-                .uri("http://localhost:9090/stats/test")
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
-
-        return s;
     }
 }
