@@ -37,4 +37,10 @@ public class StatsController {
         log.info("Получение статистики по посещениям");
         return statsService.getStats(start, end, uris, unique);
     }
+
+    // TEST
+    @GetMapping("/stats/test")
+    public String getTestString() {
+        return "Test string for WebClient";
+    }
 }
