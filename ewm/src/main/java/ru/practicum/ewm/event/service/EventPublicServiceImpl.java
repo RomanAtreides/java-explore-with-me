@@ -31,7 +31,7 @@ public class EventPublicServiceImpl implements EventPublicService {
             String sort,
             Integer from,
             Integer size) {
-        return null;
+        return null; // TODO: 01.01.2023 Реализовать метод
     }
 
     @Override

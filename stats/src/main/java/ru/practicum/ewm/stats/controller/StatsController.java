@@ -17,13 +17,13 @@ public class StatsController {
 
     private final StatsService statsService;
 
-    // Сохранение информации о том, что к эндпоинту был запрос
+    // Сохранение информации о том, что к ручке был запрос
     // Сохранение информации о том,
     // что на uri конкретного сервиса был отправлен запрос пользователем.
     // Название сервиса, uri и ip пользователя указаны в теле запроса.
     @PostMapping("/hit")
     public void updateStats(@RequestBody EndpointHit hit) {
-        log.info("Сохранение информации о том, что к эндпоинту был запрос");
+        log.info("Сохранение информации о том, что к ручке был запрос");
         statsService.updateStats(hit);
     }
 

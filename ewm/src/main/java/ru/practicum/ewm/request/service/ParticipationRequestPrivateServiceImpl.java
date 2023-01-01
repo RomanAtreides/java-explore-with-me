@@ -99,6 +99,6 @@ public class ParticipationRequestPrivateServiceImpl implements ParticipationRequ
     @Override
     @Transactional
     public ParticipationRequestDto cancelParticipationRequest(Long userId, Long requestId) {
-        return null;
+        return null; // TODO: 01.01.2023 Реализовать метод
     }
 }

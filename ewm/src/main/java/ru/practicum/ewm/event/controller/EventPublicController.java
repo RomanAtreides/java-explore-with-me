@@ -17,6 +17,19 @@ public class EventPublicController {
 
     private final EventPublicService eventPublicService;
 
+    // Из ТЗ:
+    // Каждый публичный запрос для получения списка событий
+    // или полной информации о мероприятии
+    // должен фиксироваться сервисом статистики
+
+    // Сохранять статистику нужно будет по двум эндпоинтам:
+    // * GET /events, который отвечает за получение событий с возможностью фильтрации.
+    // * GET /events/{id}, который позволяет получить подробную информацию об опубликованном событии по его идентификатору.
+
+    // HttpServletRequest request
+    // request.getRemoteAddr(); // client ip
+    // request.getRequestURI(); // endpoint path
+
     // Public: Events - Получение событий с возможностью фильтрации
     @GetMapping
     public List<EventShortDto> findFilteredEvents(

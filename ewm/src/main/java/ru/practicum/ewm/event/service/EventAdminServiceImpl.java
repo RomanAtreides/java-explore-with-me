@@ -38,7 +38,7 @@ public class EventAdminServiceImpl implements EventAdminService {
             Integer from,
             Integer size) {
         // Эндпоинт возвращает полную информацию обо всех событиях подходящих под переданные условия
-        return null;
+        return null; // TODO: 01.01.2023 Реализовать метод
     }
 
     @Override
