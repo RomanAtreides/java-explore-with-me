@@ -23,7 +23,7 @@ public class StatsController {
     // Название сервиса, uri и ip пользователя указаны в теле запроса.
     @PostMapping("/hit")
     public void updateStats(@RequestBody EndpointHit hit) {
-        log.info("Сохранение информации о том, что к ручке был запрос");
+        log.info(String.format("Запрос от сервиса %s; URI=%s", hit.getApp(), hit.getUri()));
         statsService.updateStats(hit);
     }
 
@@ -36,11 +36,5 @@ public class StatsController {
             @RequestParam(required = false, defaultValue = "false") Boolean unique) {
         log.info("Получение статистики по посещениям");
         return statsService.getStats(start, end, uris, unique);
-    }
-
-    // TEST
-    @GetMapping("/test")
-    public String getTestString() {
-        return "Test string for WebClient from Stats app. Test 3";
     }
 }

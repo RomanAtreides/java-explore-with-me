@@ -7,6 +7,7 @@ import ru.practicum.ewm.event.dto.EventFullDto;
 import ru.practicum.ewm.event.dto.EventShortDto;
 import ru.practicum.ewm.event.service.EventPublicService;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Slf4j
@@ -58,8 +59,8 @@ public class EventPublicController {
 
     // Public: Events - Получение подробной информации об опубликованном событии по его идентификатору
     @GetMapping("/{id}")
-    public EventFullDto findFullEventInfo(@PathVariable Long id) {
+    public EventFullDto findFullEventInfo(@PathVariable Long id, HttpServletRequest request) {
         log.info("Получение подробной информации об опубликованном событии с id={}", id);
-        return eventPublicService.findFullEventInfo(id);
+        return eventPublicService.findFullEventInfo(id, request.getRemoteAddr(), request.getRequestURI());
     }
 }

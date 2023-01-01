@@ -6,6 +6,7 @@ import ru.practicum.ewm.event.dto.EventShortDto;
 import java.util.List;
 
 public interface EventPublicService {
+
     List<EventShortDto> findFilteredEvents(
             String text,
             Long[] categories,
@@ -18,5 +19,5 @@ public interface EventPublicService {
             Integer size
     );
 
-    EventFullDto findFullEventInfo(Long id);
+    EventFullDto findFullEventInfo(Long eventId, String clientIp, String endpointPath);
 }
