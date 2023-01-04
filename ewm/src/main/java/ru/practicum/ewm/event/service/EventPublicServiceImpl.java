@@ -16,6 +16,8 @@ import ru.practicum.ewm.event.dto.EventShortDto;
 import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.event.repository.EventRepository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -28,6 +30,7 @@ public class EventPublicServiceImpl implements EventPublicService {
     @Value("${spring.application.name}")
     private String applicationName;
     private final WebClient webClient = WebClient.create("http://localhost:9090");
+    private final EntityManager entityManager;
     private final EventRepository eventRepository;
     private final EventValidator validator;
 
@@ -48,9 +51,6 @@ public class EventPublicServiceImpl implements EventPublicService {
     @Override
     @Transactional
     public EventFullDto findFullEventInfo(Long eventId, String clientIp, String endpointPath) {
-        Event event = validator.getEventIfExists(eventId);
-        Long views = event.getViews();
-
         EndpointHit hit = EndpointHit.builder()
                 .id(null)
                 .app(applicationName)
@@ -67,11 +67,14 @@ public class EventPublicServiceImpl implements EventPublicService {
                 .bodyToMono(Void.class)
                 .block();
 
-        event.setViews(++views);
+        Query query = entityManager.createNativeQuery(
+                "UPDATE events SET views = views + 1 WHERE id = ?1 RETURNING *",
+                Event.class
+        );
 
-        Event entity = eventRepository.save(event);
+        Event event = validator.getEventIfExistsByNativeQuery(eventId, query);
 
-        return EventMapper.eventToEventFullDto(entity);
+        return EventMapper.eventToEventFullDto(event);
     }
 
     /*private String test(EndpointHit hit) {
