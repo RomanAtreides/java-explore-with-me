@@ -2,13 +2,11 @@ package ru.practicum.ewm.stats.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.stats.dto.EndpointHit;
 import ru.practicum.ewm.stats.dto.ViewStats;
 import ru.practicum.ewm.stats.service.StatsService;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -24,15 +22,15 @@ public class StatsController {
     // Название сервиса, uri и ip пользователя указаны в теле запроса.
     @PostMapping("/hit")
     public void updateStats(@RequestBody EndpointHit hit) {
-        log.info(String.format("Запрос от сервиса %s; URI=%s", hit.getApp(), hit.getUri()));
+        log.info("Сохранение информации о просмотре события {}", hit);
         statsService.updateStats(hit);
     }
 
     // Получение статистики по посещениям
     @GetMapping("/stats")
     public List<ViewStats> getStats(
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
+            @RequestParam String start,
+            @RequestParam String end,
             @RequestParam(required = false) String[] uris,
             @RequestParam(required = false, defaultValue = "false") Boolean unique) {
         log.info("Получение статистики по посещениям");

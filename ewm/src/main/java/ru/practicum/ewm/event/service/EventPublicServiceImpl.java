@@ -16,9 +16,10 @@ import ru.practicum.ewm.event.dto.EventShortDto;
 import ru.practicum.ewm.event.dto.ViewStats;
 import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.event.repository.EventRepository;
-import ru.practicum.ewm.utility.Common;
 
 import javax.persistence.EntityManager;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
@@ -54,6 +55,9 @@ public class EventPublicServiceImpl implements EventPublicService {
     @Override
     @Transactional
     public EventFullDto findFullEventInfo(Long eventId, String clientIp, String endpointPath) {
+        String start = encode(LocalDateTime.now().minusDays(21).toString());
+        String end = encode(LocalDateTime.now().toString());
+
         EndpointHit hit = EndpointHit.builder()
                 .id(null)
                 .app(applicationName)
@@ -64,7 +68,7 @@ public class EventPublicServiceImpl implements EventPublicService {
 
         saveEndpointHit(hit);
 
-        List<ViewStats> viewStats = findViewStats(endpointPath);
+        List<ViewStats> viewStats = findViewStats(start, end, endpointPath);
         Event event = validator.getEventIfExists(eventId);
         Long views = viewStats.get(0).getHits();
 
@@ -85,17 +89,21 @@ public class EventPublicServiceImpl implements EventPublicService {
                 .block();
     }
 
-    private List<ViewStats> findViewStats(String endpointPath) {
+    private List<ViewStats> findViewStats(String start, String end, String endpointPath) {
         return Arrays.asList(Objects.requireNonNull(webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/stats")
-                        .queryParam("start", LocalDateTime.now().minusDays(21L).format(Common.FORMATTER))
-                        .queryParam("end", LocalDateTime.now().format(Common.FORMATTER))
+                        .queryParam("start", start)
+                        .queryParam("end", end)
                         .queryParam("uris", endpointPath)
                         .build())
                 .retrieve()
                 .bodyToMono(ViewStats[].class)
                 .block()));
+    }
+
+    private String encode(String value) {
+        return URLEncoder.encode(value, StandardCharsets.UTF_8);
     }
 
     /*private String test(EndpointHit hit) {

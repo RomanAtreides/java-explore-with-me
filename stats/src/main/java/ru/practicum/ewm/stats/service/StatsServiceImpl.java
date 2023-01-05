@@ -14,7 +14,10 @@ import ru.practicum.ewm.stats.model.Stats;
 import ru.practicum.ewm.stats.repository.StatsRepository;
 
 import javax.persistence.EntityManager;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,13 +41,15 @@ public class StatsServiceImpl implements StatsService {
     // Обратите внимание: значение даты и времени нужно закодировать
     // (например используя java.net.URLEncoder.encode)
     @Override
-    public List<ViewStats> getStats(LocalDateTime start, LocalDateTime end, String[] uris, Boolean unique) {
+    public List<ViewStats> getStats(String start, String end, String[] uris, Boolean unique) {
+        LocalDateTime[] intervalBounds = getDatesForInterval(start, end);
+
         QStats qStats = QStats.stats;
         JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
 
         JPAQuery<Stats> query = queryFactory.select(qStats)
                 .from(qStats)
-                .where(qStats.timestamp.between(start, end));
+                .where(qStats.timestamp.between(intervalBounds[0], intervalBounds[1]));
 
         if (uris != null) {
             query = query.where(qStats.uri.in(uris));
@@ -70,5 +75,14 @@ public class StatsServiceImpl implements StatsService {
                         tuple.get(2, Long.class)
                 ))
                 .collect(Collectors.toList());
+    }
+
+    private LocalDateTime[] getDatesForInterval(String encodedStart, String encodedEnd) {
+        String decodedStart = URLDecoder.decode(encodedStart, StandardCharsets.UTF_8);
+        String decodedEnd = URLDecoder.decode(encodedEnd, StandardCharsets.UTF_8);
+        LocalDateTime start = LocalDateTime.parse(decodedStart, DateTimeFormatter.ISO_DATE_TIME);
+        LocalDateTime end = LocalDateTime.parse(decodedEnd, DateTimeFormatter.ISO_DATE_TIME);
+
+        return new LocalDateTime[]{start, end};
     }
 }

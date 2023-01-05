@@ -22,7 +22,7 @@ public class ErrorHandler {
         return new ApiError(
                 Arrays.asList(exception.getStackTrace()),
                 exception.getMessage(),
-                "Ошибка валидации",
+                "Неверный запрос",
                 HttpStatus.BAD_REQUEST.toString(),
                 LocalDateTime.now().format(Common.FORMATTER)
         );
