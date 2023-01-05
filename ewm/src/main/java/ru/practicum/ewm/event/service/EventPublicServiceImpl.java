@@ -13,6 +13,7 @@ import ru.practicum.ewm.event.EventValidator;
 import ru.practicum.ewm.event.dto.EndpointHit;
 import ru.practicum.ewm.event.dto.EventFullDto;
 import ru.practicum.ewm.event.dto.EventShortDto;
+import ru.practicum.ewm.event.dto.ViewStats;
 import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.event.repository.EventRepository;
 
@@ -20,7 +21,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -66,6 +70,20 @@ public class EventPublicServiceImpl implements EventPublicService {
                 .retrieve()
                 .bodyToMono(Void.class)
                 .block();
+
+        /*List<ViewStats> viewStats = Arrays.asList(Objects.requireNonNull(webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path ("/stats")
+                        .queryParam("start", LocalDateTime.now().minusDays(21L).truncatedTo(ChronoUnit.SECONDS))
+                        .queryParam("end", LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS))
+                        .build())
+                .retrieve()
+                .bodyToMono(ViewStats[].class)
+                .block()));
+
+        List<Long> hits = viewStats.stream()
+                .map(ViewStats::getHits)
+                .collect(Collectors.toList());*/
 
         Query query = entityManager.createNativeQuery(
                 "UPDATE events SET views = views + 1 WHERE id = ?1 RETURNING *",
