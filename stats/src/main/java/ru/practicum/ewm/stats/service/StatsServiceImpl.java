@@ -1,6 +1,8 @@
 package ru.practicum.ewm.stats.service;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,9 +40,9 @@ public class StatsServiceImpl implements StatsService {
     @Override
     public List<ViewStats> getStats(LocalDateTime start, LocalDateTime end, String[] uris, Boolean unique) {
         QStats qStats = QStats.stats;
+        JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
 
-        JPAQuery<Stats> query = new JPAQuery<Stats>(entityManager)
-                .select(qStats)
+        JPAQuery<Stats> query = queryFactory.select(qStats)
                 .from(qStats)
                 .where(qStats.timestamp.between(start, end));
 
@@ -52,30 +54,17 @@ public class StatsServiceImpl implements StatsService {
             query = query.distinct();
         }
 
-        List<Stats> st = query.fetch();
+        List<Tuple> tuples = query.select(qStats.app, qStats.uri, qStats.uri.count())
+                .from(qStats)
+                .groupBy(qStats.app, qStats.uri)
+                .fetch();
 
-        return st.stream()
-                .map(stats -> new ViewStats(stats.getApp(), stats.getUri(), 1L))
+        return tuples.stream()
+                .map(tuple -> new ViewStats(
+                        tuple.get(0, String.class),
+                        tuple.get(1, String.class),
+                        tuple.get(2, Long.class)
+                ))
                 .collect(Collectors.toList());
     }
-
-    /*@Override
-    public List<ViewStats> getStats(LocalDateTime start, LocalDateTime end, String[] uris, Boolean unique) {
-        List<Object[]> objectsFromQuery = entityManager.createQuery(
-                "select s.app, s.uri, count(s.uri) from Stats s where s.timestamp >= ?1 and s.timestamp <= ?2 group by s.app, s.uri",
-                Object[].class
-        ).setParameter(1, start).setParameter(2, end).getResultList();
-
-        List<ViewStats> viewStats = new ArrayList<>();
-
-        for (Object[] object : objectsFromQuery) {
-            ViewStats view = new ViewStats();
-
-            view.setApp((String) object[0]);
-            view.setUri((String) object[1]);
-            view.setHits((Long) object[2]);
-            viewStats.add(view);
-        }
-        return viewStats;
-    }*/
 }
