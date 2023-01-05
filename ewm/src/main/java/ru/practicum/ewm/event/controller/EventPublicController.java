@@ -23,24 +23,16 @@ public class EventPublicController {
     // или полной информации о мероприятии
     // должен фиксироваться сервисом статистики
 
-    // Ручки для сохранения статистики:
-    // * GET /events, который отвечает за получение событий с возможностью фильтрации.
-    // * GET /events/{id}, который позволяет получить подробную информацию об опубликованном событии по его идентификатору.
-
-    // HttpServletRequest request
-    // request.getRemoteAddr(); // client ip
-    // request.getRequestURI(); // endpoint path
-
-    // Public: Events - Получение событий с возможностью фильтрации
+    // Получение событий с возможностью фильтрации
     @GetMapping
     public List<EventShortDto> findFilteredEvents(
-            @RequestParam String text,              // текст для поиска в содержимом аннотации и подробном описании события
-            @RequestParam Long[] categories,        // список идентификаторов категорий в которых будет вестись поиск
-            @RequestParam Boolean paid,             // поиск только платных/бесплатных событий
-            @RequestParam String rangeStart,        // дата и время не раньше которых должно произойти событие
-            @RequestParam String rangeEnd,          // дата и время не позже которых должно произойти событие
-            @RequestParam Boolean onlyAvailable,    // только события у которых не исчерпан лимит запросов на участие
-            @RequestParam String sort,                                              // Вариант сортировки: по дате события или по количеству просмотров; EVENT_DATE, VIEWS
+            @RequestParam(required = false) String text,              // текст для поиска в содержимом аннотации и подробном описании события
+            @RequestParam(required = false) Long[] categories,        // список идентификаторов категорий в которых будет вестись поиск
+            @RequestParam(required = false) Boolean paid,             // поиск только платных/бесплатных событий
+            @RequestParam(required = false) String rangeStart,        // дата и время не раньше которых должно произойти событие
+            @RequestParam(required = false) String rangeEnd,          // дата и время не позже которых должно произойти событие
+            @RequestParam(required = false, defaultValue = "false") Boolean onlyAvailable,    // только события у которых не исчерпан лимит запросов на участие
+            @RequestParam(required = false) String sort,                                              // Вариант сортировки: по дате события или по количеству просмотров; EVENT_DATE, VIEWS
             @RequestParam(required = false, defaultValue = "0") Integer from,       // количество событий, которые нужно пропустить для формирования текущего набора
             @RequestParam(required = false, defaultValue = "10") Integer size) {    // количество событий в наборе
         log.info("Получение событий с возможностью фильтрации");
@@ -57,7 +49,7 @@ public class EventPublicController {
         );
     }
 
-    // Public: Events - Получение подробной информации об опубликованном событии по его идентификатору
+    // Получение подробной информации об опубликованном событии по его идентификатору
     @GetMapping("/{id}")
     public EventFullDto findFullEventInfo(@PathVariable Long id, HttpServletRequest request) {
         log.info("Получение подробной информации об опубликованном событии с id={}", id);

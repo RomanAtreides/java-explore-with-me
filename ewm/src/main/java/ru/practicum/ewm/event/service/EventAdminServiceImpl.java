@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.category.CategoryMapper;
 import ru.practicum.ewm.category.service.CategoryPublicService;
 import ru.practicum.ewm.event.EventMapper;
-import ru.practicum.ewm.event.EventState;
+import ru.practicum.ewm.event.state.EventState;
 import ru.practicum.ewm.event.EventValidator;
 import ru.practicum.ewm.event.dto.EventFullDto;
 import ru.practicum.ewm.event.model.Event;

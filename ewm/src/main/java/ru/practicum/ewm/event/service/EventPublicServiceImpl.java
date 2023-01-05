@@ -22,6 +22,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -49,7 +50,7 @@ public class EventPublicServiceImpl implements EventPublicService {
             String sort,
             Integer from,
             Integer size) {
-        return null; // TODO: 01.01.2023 Реализовать метод
+        return new ArrayList<>(); // TODO: 01.01.2023 Реализовать метод
     }
 
     @Override
