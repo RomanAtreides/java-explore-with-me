@@ -59,6 +59,10 @@ public class StatsServiceImpl implements StatsService {
                 .groupBy(qStats.app, qStats.uri)
                 .fetch();
 
+        return getResult(tuples);
+    }
+
+    private List<ViewStats> getResult(List<Tuple> tuples) {
         return tuples.stream()
                 .map(tuple -> new ViewStats(
                         tuple.get(0, String.class),
