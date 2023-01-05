@@ -16,15 +16,14 @@ import ru.practicum.ewm.event.dto.EventShortDto;
 import ru.practicum.ewm.event.dto.ViewStats;
 import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.event.repository.EventRepository;
+import ru.practicum.ewm.utility.Common;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -63,6 +62,20 @@ public class EventPublicServiceImpl implements EventPublicService {
                 .timestamp(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS))
                 .build();
 
+        saveEndpointHit(hit);
+
+        List<ViewStats> viewStats = findViewStats(endpointPath);
+        Event event = validator.getEventIfExists(eventId);
+        Long views = viewStats.get(0).getHits();
+
+        event.setViews(views);
+
+        Event entity = eventRepository.save(event);
+
+        return EventMapper.eventToEventFullDto(entity);
+    }
+
+    private void saveEndpointHit(EndpointHit hit) {
         webClient.post()
                 .uri("/hit")
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
@@ -70,29 +83,19 @@ public class EventPublicServiceImpl implements EventPublicService {
                 .retrieve()
                 .bodyToMono(Void.class)
                 .block();
+    }
 
-        /*List<ViewStats> viewStats = Arrays.asList(Objects.requireNonNull(webClient.get()
+    private List<ViewStats> findViewStats(String endpointPath) {
+        return Arrays.asList(Objects.requireNonNull(webClient.get()
                 .uri(uriBuilder -> uriBuilder
-                        .path ("/stats")
-                        .queryParam("start", LocalDateTime.now().minusDays(21L).truncatedTo(ChronoUnit.SECONDS))
-                        .queryParam("end", LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS))
+                        .path("/stats")
+                        .queryParam("start", LocalDateTime.now().minusDays(21L).format(Common.FORMATTER))
+                        .queryParam("end", LocalDateTime.now().format(Common.FORMATTER))
+                        .queryParam("uris", endpointPath)
                         .build())
                 .retrieve()
                 .bodyToMono(ViewStats[].class)
                 .block()));
-
-        List<Long> hits = viewStats.stream()
-                .map(ViewStats::getHits)
-                .collect(Collectors.toList());*/
-
-        Query query = entityManager.createNativeQuery(
-                "UPDATE events SET views = views + 1 WHERE id = ?1 RETURNING *",
-                Event.class
-        );
-
-        Event event = validator.getEventIfExistsByNativeQuery(eventId, query);
-
-        return EventMapper.eventToEventFullDto(event);
     }
 
     /*private String test(EndpointHit hit) {

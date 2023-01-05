@@ -7,9 +7,6 @@ import ru.practicum.ewm.event.repository.EventRepository;
 import ru.practicum.ewm.exception.EntityNotFoundException;
 import ru.practicum.ewm.exception.ValidationException;
 
-import javax.persistence.NoResultException;
-import javax.persistence.Query;
-
 @Component
 @RequiredArgsConstructor
 public class EventValidator {
@@ -24,16 +21,5 @@ public class EventValidator {
         }
         return eventRepository.findById(eventId)
                 .orElseThrow(() -> new EntityNotFoundException(exceptionMessage));
-    }
-
-    public Event getEventIfExistsByNativeQuery(Long eventId, Query query) {
-        Event event;
-
-        try {
-            event = (Event) query.setParameter(1, eventId).getSingleResult();
-        } catch (NoResultException exception) {
-            throw new EntityNotFoundException(String.format("Событие с id=%d не найдено", eventId));
-        }
-        return event;
     }
 }
