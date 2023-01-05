@@ -37,9 +37,6 @@ public class StatsServiceImpl implements StatsService {
         statsRepository.save(stats);
     }
 
-    // Получение статистики по посещениям.
-    // Обратите внимание: значение даты и времени нужно закодировать
-    // (например используя java.net.URLEncoder.encode)
     @Override
     public List<ViewStats> getStats(String start, String end, String[] uris, Boolean unique) {
         LocalDateTime[] intervalBounds = getDatesForInterval(start, end);

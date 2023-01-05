@@ -20,14 +20,14 @@ public class Stats {
     private Long id;
 
     @Column(name = "app")
-    private String app; // Идентификатор сервиса для которого записывается информация
+    private String app;
 
     @Column(name = "uri")
-    private String uri; // URI для которого был осуществлен запрос
+    private String uri;
 
     @Column(name = "ip")
-    private String ip; // IP-адрес пользователя, осуществившего запрос
+    private String ip;
 
     @Column(name = "view_date")
-    private LocalDateTime timestamp; // Дата и время, когда был совершен запрос к эндпоинту (в формате "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime timestamp;
 }
