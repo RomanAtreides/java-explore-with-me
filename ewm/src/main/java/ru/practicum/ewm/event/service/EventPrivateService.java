@@ -4,7 +4,7 @@ import ru.practicum.ewm.event.dto.EventFullDto;
 import ru.practicum.ewm.event.dto.EventShortDto;
 import ru.practicum.ewm.event.dto.NewEventDto;
 import ru.practicum.ewm.request.dto.ParticipationRequestDto;
-import ru.practicum.ewm.request.UpdateEventRequest;
+import ru.practicum.ewm.event.UpdateEventRequest;
 
 import java.util.List;
 import java.util.Map;

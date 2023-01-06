@@ -20,7 +20,7 @@ import ru.practicum.ewm.exception.AccessException;
 import ru.practicum.ewm.exception.EntityNotFoundException;
 import ru.practicum.ewm.exception.ValidationException;
 import ru.practicum.ewm.request.ParticipationRequestMapper;
-import ru.practicum.ewm.request.UpdateEventRequest;
+import ru.practicum.ewm.event.UpdateEventRequest;
 import ru.practicum.ewm.request.dto.ParticipationRequestDto;
 import ru.practicum.ewm.request.model.ParticipationRequest;
 import ru.practicum.ewm.request.repository.ParticipationRequestRepository;

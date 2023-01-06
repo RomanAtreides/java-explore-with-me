@@ -9,7 +9,7 @@ import ru.practicum.ewm.event.dto.EventShortDto;
 import ru.practicum.ewm.event.dto.NewEventDto;
 import ru.practicum.ewm.event.service.EventPrivateService;
 import ru.practicum.ewm.request.dto.ParticipationRequestDto;
-import ru.practicum.ewm.request.UpdateEventRequest;
+import ru.practicum.ewm.event.UpdateEventRequest;
 import ru.practicum.ewm.utility.marker.Create;
 import ru.practicum.ewm.utility.marker.Update;
 

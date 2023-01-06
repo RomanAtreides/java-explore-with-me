@@ -13,7 +13,7 @@ import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.event.model.Location;
 import ru.practicum.ewm.event.repository.EventRepository;
 import ru.practicum.ewm.exception.ValidationException;
-import ru.practicum.ewm.request.AdminUpdateEventRequest;
+import ru.practicum.ewm.event.AdminUpdateEventRequest;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;

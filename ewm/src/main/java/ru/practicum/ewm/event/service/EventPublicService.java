@@ -16,7 +16,9 @@ public interface EventPublicService {
             Boolean onlyAvailable,
             String sort,
             Integer from,
-            Integer size
+            Integer size,
+            String clientIp,
+            String endpointPath
     );
 
     EventFullDto findFullEventInfo(Long eventId, String clientIp, String endpointPath);

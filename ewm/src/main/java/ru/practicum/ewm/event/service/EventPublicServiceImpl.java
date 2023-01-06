@@ -54,7 +54,18 @@ public class EventPublicServiceImpl implements EventPublicService {
             Boolean onlyAvailable,
             String sort,
             Integer from,
-            Integer size) {
+            Integer size,
+            String clientIp,
+            String endpointPath) {
+        EndpointHit hit = EndpointHit.builder()
+                .id(null)
+                .app(applicationName)
+                .uri(endpointPath)
+                .ip(clientIp)
+                .timestamp(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS))
+                .build();
+
+        saveEndpointHit(hit);
         QEvent qEvent = QEvent.event;
         JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
 
@@ -101,15 +112,10 @@ public class EventPublicServiceImpl implements EventPublicService {
             query = query.where(qEvent.confirmedRequests.lt(qEvent.participantLimit));
         }
 
-        if (sort != null) {
-            switch (sort) {
-                case "EVENT_DATE":
-                    query = query.orderBy(qEvent.eventDate.asc());
-                    break;
-                case "VIEWS":
-                    query = query.orderBy(qEvent.views.asc());
-                    break;
-            }
+        if ("EVENT_DATE".equals(sort)) {
+            query = query.orderBy(qEvent.eventDate.asc());
+        } else if ("VIEWS".equals(sort)) {
+            query = query.orderBy(qEvent.views.asc());
         }
 
         List<Event> events = query.limit(size).offset(from).fetch();

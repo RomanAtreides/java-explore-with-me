@@ -34,7 +34,8 @@ public class EventPublicController {
             @RequestParam(required = false, defaultValue = "false") Boolean onlyAvailable,    // только события у которых не исчерпан лимит запросов на участие
             @RequestParam(required = false) String sort,                                              // Вариант сортировки: по дате события или по количеству просмотров; EVENT_DATE, VIEWS
             @RequestParam(required = false, defaultValue = "0") Integer from,       // количество событий, которые нужно пропустить для формирования текущего набора
-            @RequestParam(required = false, defaultValue = "10") Integer size) {    // количество событий в наборе
+            @RequestParam(required = false, defaultValue = "10") Integer size,
+            HttpServletRequest request) {    // количество событий в наборе
         log.info("Получение событий с возможностью фильтрации");
         return eventPublicService.findFilteredEvents(
                 text,
@@ -45,7 +46,9 @@ public class EventPublicController {
                 onlyAvailable,
                 sort,
                 from,
-                size
+                size,
+                request.getRemoteAddr(),
+                request.getRequestURI()
         );
     }
 
