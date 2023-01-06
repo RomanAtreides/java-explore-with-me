@@ -19,6 +19,7 @@ import ru.practicum.ewm.event.dto.ViewStats;
 import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.event.model.QEvent;
 import ru.practicum.ewm.event.repository.EventRepository;
+import ru.practicum.ewm.event.state.EventState;
 import ru.practicum.ewm.utility.Common;
 
 import javax.persistence.EntityManager;
@@ -57,14 +58,13 @@ public class EventPublicServiceImpl implements EventPublicService {
         QEvent qEvent = QEvent.event;
         JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
 
-        // TODO: 06.01.2023 Добавить обращение к статистике
-        // TODO: 06.01.2023 Должны быть только опубликованные события
         // TODO: 06.01.2023 информация о каждом событии должна включать в себя количество просмотров
         //  и количество уже одобренных заявок на участие
         // TODO: 06.01.2023 информацию о том, что по этому эндпоинту был осуществлен и обработан запрос,
         //  нужно сохранить в сервисе статистики
 
-        JPAQuery<Event> query = queryFactory.select(qEvent).from(qEvent);
+        // Должны быть только опубликованные события
+        JPAQuery<Event> query = queryFactory.select(qEvent).from(qEvent).where(qEvent.state.eq(EventState.PUBLISHED));
 
         // текст для поиска в содержимом аннотации и подробном описании события
         if (text != null) {
@@ -82,16 +82,18 @@ public class EventPublicServiceImpl implements EventPublicService {
             query = query.where(qEvent.paid.eq(paid));
         }
 
-        // TODO: 06.01.2023 если в запросе не указан диапазон дат [rangeStart-rangeEnd],
-        //  то нужно выгружать события, которые произойдут позже текущей даты и времени
-        // дата и время не раньше которых должно произойти событие
-        if (rangeStart != null) {
-            query = query.where(qEvent.eventDate.after(LocalDateTime.parse(rangeStart, Common.FORMATTER)));
-        }
+        if (rangeStart == null && rangeEnd == null) {
+            query = query.where(qEvent.eventDate.after(LocalDateTime.now()));
+        } else {
+            if (rangeStart != null) {
+                // дата и время не раньше которых должно произойти событие
+                query = query.where(qEvent.eventDate.after(LocalDateTime.parse(rangeStart, Common.FORMATTER)));
+            }
 
-        // дата и время не позже которых должно произойти событие
-        if (rangeEnd != null) {
-            query = query.where(qEvent.eventDate.before(LocalDateTime.parse(rangeEnd, Common.FORMATTER)));
+            if (rangeEnd != null) {
+                // дата и время не позже которых должно произойти событие
+                query = query.where(qEvent.eventDate.before(LocalDateTime.parse(rangeEnd, Common.FORMATTER)));
+            }
         }
 
         // только события у которых не исчерпан лимит запросов на участие
