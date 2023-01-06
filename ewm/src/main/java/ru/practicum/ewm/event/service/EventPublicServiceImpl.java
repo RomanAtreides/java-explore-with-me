@@ -1,5 +1,7 @@
 package ru.practicum.ewm.event.service;
 
+import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -15,17 +17,19 @@ import ru.practicum.ewm.event.dto.EventFullDto;
 import ru.practicum.ewm.event.dto.EventShortDto;
 import ru.practicum.ewm.event.dto.ViewStats;
 import ru.practicum.ewm.event.model.Event;
+import ru.practicum.ewm.event.model.QEvent;
 import ru.practicum.ewm.event.repository.EventRepository;
+import ru.practicum.ewm.utility.Common;
 
 import javax.persistence.EntityManager;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -50,7 +54,67 @@ public class EventPublicServiceImpl implements EventPublicService {
             String sort,
             Integer from,
             Integer size) {
-        return new ArrayList<>(); // TODO: 01.01.2023 Реализовать метод
+        QEvent qEvent = QEvent.event;
+        JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
+
+        // TODO: 06.01.2023 Добавить обращение к статистике
+        // TODO: 06.01.2023 Должны быть только опубликованные события
+        // TODO: 06.01.2023 информация о каждом событии должна включать в себя количество просмотров
+        //  и количество уже одобренных заявок на участие
+        // TODO: 06.01.2023 информацию о том, что по этому эндпоинту был осуществлен и обработан запрос,
+        //  нужно сохранить в сервисе статистики
+
+        JPAQuery<Event> query = queryFactory.select(qEvent).from(qEvent);
+
+        // текст для поиска в содержимом аннотации и подробном описании события
+        if (text != null) {
+            query = query.where(qEvent.annotation.containsIgnoreCase(text)
+                    .or(qEvent.description.containsIgnoreCase(text)));
+        }
+
+        // список идентификаторов категорий в которых будет вестись поиск
+        if (categories != null) {
+            query = query.where(qEvent.category.id.in(categories));
+        }
+
+        // поиск только платных/бесплатных событий
+        if (paid != null) {
+            query = query.where(qEvent.paid.eq(paid));
+        }
+
+        // TODO: 06.01.2023 если в запросе не указан диапазон дат [rangeStart-rangeEnd],
+        //  то нужно выгружать события, которые произойдут позже текущей даты и времени
+        // дата и время не раньше которых должно произойти событие
+        if (rangeStart != null) {
+            query = query.where(qEvent.eventDate.after(LocalDateTime.parse(rangeStart, Common.FORMATTER)));
+        }
+
+        // дата и время не позже которых должно произойти событие
+        if (rangeEnd != null) {
+            query = query.where(qEvent.eventDate.before(LocalDateTime.parse(rangeEnd, Common.FORMATTER)));
+        }
+
+        // только события у которых не исчерпан лимит запросов на участие
+        if (onlyAvailable) {
+            query = query.where(qEvent.confirmedRequests.lt(qEvent.participantLimit));
+        }
+
+        if (sort != null) {
+            switch (sort) {
+                case "EVENT_DATE":
+                    query = query.orderBy(qEvent.eventDate.asc());
+                    break;
+                case "VIEWS":
+                    query = query.orderBy(qEvent.views.asc());
+                    break;
+            }
+        }
+
+        List<Event> events = query.limit(size).offset(from).fetch();
+
+        return events.stream()
+                .map(EventMapper::eventToEventShortDto)
+                .collect(Collectors.toList());
     }
 
     @Override

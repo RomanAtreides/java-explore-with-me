@@ -1,5 +1,6 @@
 package ru.practicum.ewm.event.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,12 +18,21 @@ import java.time.LocalDateTime;
 public class EventShortDto {
 
     private String annotation; // Краткое описание
+
     private CategoryDto category; // Категория; id + name
+
     private Long confirmedRequests; // Количество одобренных заявок на участие в данном событии
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate; // Дата и время на которые намечено событие (в формате "yyyy-MM-dd HH:mm:ss"), example: 2024-12-31 15:10:05
+
     private Long id; // Идентификатор
+
     private UserShortDto initiator; // Пользователь (краткая информация); id + name!
+
     private boolean paid; // Нужно ли оплачивать участие
+
     private String title; // Заголовок; example: Знаменитое шоу 'Летающая кукуруза'
+
     private Long views; // Количество просмотрев события
 }
