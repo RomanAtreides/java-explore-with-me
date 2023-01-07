@@ -1,4 +1,4 @@
-package ru.practicum.ewm.event;
+package ru.practicum.ewm.event.common;
 
 import org.springframework.stereotype.Component;
 import ru.practicum.ewm.category.CategoryMapper;

@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-import ru.practicum.ewm.event.EventMapper;
-import ru.practicum.ewm.event.EventValidator;
+import ru.practicum.ewm.event.common.EventMapper;
+import ru.practicum.ewm.event.common.EventValidator;
 import ru.practicum.ewm.event.dto.EndpointHit;
 import ru.practicum.ewm.event.dto.EventFullDto;
 import ru.practicum.ewm.event.dto.EventShortDto;
@@ -49,6 +49,8 @@ public class EventPublicServiceImpl implements EventPublicService {
     private final EntityManager entityManager;
     private final EventRepository eventRepository;
     private final EventValidator validator;
+    QEvent qEvent = QEvent.event;
+    QParticipationRequest qRequest = QParticipationRequest.participationRequest;
 
     @Override
     @Transactional
@@ -65,15 +67,12 @@ public class EventPublicServiceImpl implements EventPublicService {
             String clientIp,
             String endpointPath) {
         buildAndSaveEndpointHit(endpointPath, clientIp);
-
-        QEvent qEvent = QEvent.event;
-        QParticipationRequest qRequest = QParticipationRequest.participationRequest;
-        JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
-
         // TODO: 06.01.2023 информация о каждом событии должна включать в себя количество просмотров
         //  и количество уже одобренных заявок на участие
 
-        // Должны быть только опубликованные события
+        JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
+
+        // Должны быть возвращены только опубликованные события
         JPAQuery<Event> query = queryFactory.select(qEvent)
                 .from(qEvent)
                 .where(qEvent.state.eq(EventState.PUBLISHED));
@@ -94,7 +93,6 @@ public class EventPublicServiceImpl implements EventPublicService {
             query = query.where(qEvent.paid.eq(paid));
         }
 
-        // Если диапазон дат не указан, то будут возвращены события, которые произойдут позже текущей даты и времени
         query = setDatesForQuery(rangeStart, rangeEnd, query, qEvent);
 
         // Только события у которых не исчерпан лимит запросов на участие
@@ -108,25 +106,11 @@ public class EventPublicServiceImpl implements EventPublicService {
         } else if (valueOf(EventSortOption.VIEWS).equals(sort)) {
             query = query.orderBy(qEvent.views.asc());
         }
+
         query = query.limit(size).offset(from);
         List<Event> events = query.fetch();
-        JPAQuery<Long> idsQuery = query.select(qEvent.id).from(qEvent);
 
-        JPAQuery<Tuple> confirmedRequestsQuery = queryFactory.select(qRequest.event.id, qRequest.status.count())
-                .from(qRequest)
-                .where(qRequest.status.eq(ParticipationStatus.CONFIRMED)
-                        .and(qRequest.event.id.in(idsQuery)))
-                .groupBy(qRequest.event.id);
-
-        List<Tuple> confirmedRequests = confirmedRequestsQuery.fetch();
-
-        for (Event event : events) {
-            for (Tuple confirmedRequest : confirmedRequests) {
-                if (event.getId().equals(confirmedRequest.get(0, Long.class))) {
-                    event.setConfirmedRequests(confirmedRequest.get(1, Long.class));
-                }
-            }
-        }
+        addConfirmedRequestsToEvents(query, events);
 
         return events.stream()
                 .map(EventMapper::eventToEventShortDto)
@@ -153,6 +137,7 @@ public class EventPublicServiceImpl implements EventPublicService {
     }
 
     public JPAQuery<Event> setDatesForQuery(String rangeStart, String rangeEnd, JPAQuery<Event> query, QEvent qEvent) {
+        // Если диапазон дат не указан, то будут возвращены события, которые произойдут позже текущей даты и времени
         if (rangeStart == null && rangeEnd == null) {
             query = query.where(qEvent.eventDate.after(LocalDateTime.now()));
         } else {
@@ -167,6 +152,27 @@ public class EventPublicServiceImpl implements EventPublicService {
             }
         }
         return query;
+    }
+
+    public void addConfirmedRequestsToEvents(JPAQuery<Event> query, List<Event> events) {
+        JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
+        JPAQuery<Long> idsQuery = query.select(qEvent.id).from(qEvent);
+
+        JPAQuery<Tuple> confirmedRequestsQuery = queryFactory.select(qRequest.event.id, qRequest.status.count())
+                .from(qRequest)
+                .where(qRequest.status.eq(ParticipationStatus.CONFIRMED)
+                        .and(qRequest.event.id.in(idsQuery)))
+                .groupBy(qRequest.event.id);
+
+        List<Tuple> confirmedRequests = confirmedRequestsQuery.fetch();
+
+        for (Event event : events) {
+            for (Tuple confirmedRequest : confirmedRequests) {
+                if (event.getId().equals(confirmedRequest.get(0, Long.class))) {
+                    event.setConfirmedRequests(confirmedRequest.get(1, Long.class));
+                }
+            }
+        }
     }
 
     private void buildAndSaveEndpointHit(String endpointPath, String clientIp) {
@@ -208,7 +214,7 @@ public class EventPublicServiceImpl implements EventPublicService {
      *  С.Савельев - вебинар по архитектуре - 1 часть:
      *  confirmedRequests - количество одобренных заявок на участие в данном событии
      *  1. Не нужно для каждого события делать отдельный запрос в БД
-     *  2. Нужно сделать один запрос сразу для всех событий с помощью оператора IN и уже из ответа сгуруппировать по
+     *  2. Нужно сделать один запрос сразу для всех событий с помощью оператора IN и уже из ответа сгруппировать по
      *  событиям эти заявки
      *
      *  Также не стоит забывать про QueryDSL для динамических запросов (когда мы на этапе

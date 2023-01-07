@@ -1,4 +1,4 @@
-package ru.practicum.ewm.event;
+package ru.practicum.ewm.event.common;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

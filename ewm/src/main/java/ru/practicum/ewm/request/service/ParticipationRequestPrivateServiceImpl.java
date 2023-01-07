@@ -3,7 +3,7 @@ package ru.practicum.ewm.request.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.ewm.event.EventValidator;
+import ru.practicum.ewm.event.common.EventValidator;
 import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.event.state.EventState;
 import ru.practicum.ewm.event.state.ParticipationStatus;

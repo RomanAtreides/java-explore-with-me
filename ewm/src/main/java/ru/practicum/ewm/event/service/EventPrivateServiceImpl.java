@@ -8,7 +8,7 @@ import ru.practicum.ewm.category.CategoryMapper;
 import ru.practicum.ewm.category.dto.CategoryDto;
 import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.category.service.CategoryPublicService;
-import ru.practicum.ewm.event.EventMapper;
+import ru.practicum.ewm.event.common.EventMapper;
 import ru.practicum.ewm.event.state.EventState;
 import ru.practicum.ewm.event.state.ParticipationStatus;
 import ru.practicum.ewm.event.dto.EventFullDto;

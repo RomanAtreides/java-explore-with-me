@@ -8,8 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.category.CategoryMapper;
 import ru.practicum.ewm.category.service.CategoryPublicService;
 import ru.practicum.ewm.event.dto.AdminUpdateEventRequest;
-import ru.practicum.ewm.event.EventMapper;
-import ru.practicum.ewm.event.EventValidator;
+import ru.practicum.ewm.event.common.EventMapper;
+import ru.practicum.ewm.event.common.EventValidator;
 import ru.practicum.ewm.event.dto.EventFullDto;
 import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.event.model.Location;
@@ -33,7 +33,7 @@ public class EventAdminServiceImpl implements EventAdminService {
     private final EventValidator eventValidator;
     private final EventRepository eventRepository;
     private final CategoryPublicService categoryPublicService;
-    private final EventPublicService eventPublicService;
+    private final EventPublicServiceImpl eventPublicServiceImpl;
 
     @Override
     @Transactional(readOnly = true)
@@ -46,7 +46,6 @@ public class EventAdminServiceImpl implements EventAdminService {
             Integer from,
             Integer size) {
         QEvent qEvent = QEvent.event;
-        //QParticipationRequest qRequest = QParticipationRequest.participationRequest;
         JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
 
         JPAQuery<Event> query = queryFactory.select(qEvent)
@@ -66,10 +65,11 @@ public class EventAdminServiceImpl implements EventAdminService {
             query = query.where(qEvent.category.id.in(categories));
         }
 
-        // Если диапазон дат не указан, то будут возвращены события, которые произойдут позже текущей даты и времени
-        query = eventPublicService.setDatesForQuery(rangeStart, rangeEnd, query, qEvent);
+        query = eventPublicServiceImpl.setDatesForQuery(rangeStart, rangeEnd, query, qEvent);
         query = query.limit(size).offset(from);
         List<Event> events = query.fetch();
+
+        eventPublicServiceImpl.addConfirmedRequestsToEvents(query, events);
 
         return events.stream()
                 .map(EventMapper::eventToEventFullDto)
@@ -79,7 +79,6 @@ public class EventAdminServiceImpl implements EventAdminService {
     @Override
     public EventFullDto changeEvent(Long eventId, AdminUpdateEventRequest request) {
         Event event = eventValidator.getEventIfExists(eventId);
-
         String newAnnotation = request.getAnnotation();
         Long newCategory = request.getCategory();
         String newDescription = request.getDescription();
