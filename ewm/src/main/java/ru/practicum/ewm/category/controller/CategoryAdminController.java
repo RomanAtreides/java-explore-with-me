@@ -10,6 +10,8 @@ import ru.practicum.ewm.category.service.CategoryAdminService;
 import ru.practicum.ewm.utility.marker.Create;
 import ru.practicum.ewm.utility.marker.Update;
 
+import javax.validation.constraints.NotNull;
+
 @Slf4j
 @RequiredArgsConstructor
 @RestController
@@ -36,7 +38,7 @@ public class CategoryAdminController {
 
     // Admin: Categories - Удаление категории
     @DeleteMapping("/{catId}")
-    public void deleteCategory(@PathVariable Long catId) {
+    public void deleteCategory(@NotNull @PathVariable Long catId) {
         log.info("Удаление категории c id={}", catId);
         categoryService.deleteCategory(catId);
     }

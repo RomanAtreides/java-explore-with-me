@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.category.dto.CategoryDto;
 import ru.practicum.ewm.category.service.CategoryPublicService;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Slf4j
@@ -27,7 +28,7 @@ public class CategoryPublicController {
 
     // Public: Categories - Получение информации о категории по её идентификатору
     @GetMapping("/{catId}")
-    public CategoryDto findCategoryById(@PathVariable Long catId) {
+    public CategoryDto findCategoryById(@NotNull @PathVariable Long catId) {
         log.info("Получение информации о категории с id={}", catId);
         return categoryPublicService.findCategoryById(catId);
     }

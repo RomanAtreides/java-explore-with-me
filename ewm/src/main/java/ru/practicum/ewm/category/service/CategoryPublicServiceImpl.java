@@ -30,16 +30,9 @@ public class CategoryPublicServiceImpl implements CategoryPublicService {
 
     @Override
     public CategoryDto findCategoryById(Long catId) {
-        return CategoryMapper.toCategoryDto(getCategoryIfExists(catId));
-    }
+        Category category = categoryRepository.findById(catId)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Категория с id=%d не найдена", catId)));
 
-    private Category getCategoryIfExists(Long catId) {
-        String exceptionMessage = "Category with id=" + catId + " was not found";
-
-        if (catId == null) {
-            throw new ValidationException(exceptionMessage);
-        }
-        return categoryRepository.findById(catId)
-                .orElseThrow(() -> new EntityNotFoundException(exceptionMessage));
+        return CategoryMapper.toCategoryDto(category);
     }
 }

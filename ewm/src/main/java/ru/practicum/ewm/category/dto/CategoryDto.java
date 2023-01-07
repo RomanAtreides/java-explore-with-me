@@ -11,10 +11,12 @@ import javax.validation.constraints.NotNull;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@NotNull(groups = {Create.class, Update.class})
+@NotNull(groups = Update.class)
 public class CategoryDto {
 
-    @NotNull(groups = {Create.class, Update.class})
+    @NotNull(groups = Update.class)
     private Long id;
+
+    @NotNull(groups = Update.class)
     private String name;
 }

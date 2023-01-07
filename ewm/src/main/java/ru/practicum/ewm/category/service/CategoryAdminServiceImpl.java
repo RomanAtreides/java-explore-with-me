@@ -19,7 +19,7 @@ public class CategoryAdminServiceImpl implements CategoryAdminService {
     @Override
     public CategoryDto changeCategory(CategoryDto categoryDto) {
         Category category = categoryRepository.findById(categoryDto.getId())
-                .orElseThrow(() -> new RuntimeException("category not found!"));
+                .orElseThrow(() -> new RuntimeException("Категория не найдена"));
 
         category.setId(categoryDto.getId());
         category.setName(categoryDto.getName());
@@ -35,10 +35,11 @@ public class CategoryAdminServiceImpl implements CategoryAdminService {
     }
 
     @Override
-    @Transactional()
     public void deleteCategory(Long catId) {
         Category category = categoryRepository.findById(catId)
-                .orElseThrow(() -> new RuntimeException("category not found"));
+                .orElseThrow(() -> new RuntimeException(String.format(
+                        "Категория с id=%d не найдена", catId
+                )));
 
         categoryRepository.delete(category);
     }
