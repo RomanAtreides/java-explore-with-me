@@ -21,11 +21,11 @@ public class EventAdminController {
     // Эндпоинт возвращает полную информацию обо всех событиях подходящих под переданные условия
     @GetMapping
     public List<EventFullDto> findEvents(
-            @RequestParam Long[] users, // список id пользователей, чьи события нужно найти
-            @RequestParam String[] states, // список состояний в которых находятся искомые события
-            @RequestParam Long[] categories, // список id категорий в которых будет вестись поиск
-            @RequestParam String rangeStart, // дата и время не раньше которых должно произойти событие
-            @RequestParam String rangeEnd, // дата и время не позже которых должно произойти событие
+            @RequestParam(required = false) Long[] users, // список id пользователей, чьи события нужно найти
+            @RequestParam(required = false) String[] states, // список состояний в которых находятся искомые события
+            @RequestParam(required = false) Long[] categories, // список id категорий в которых будет вестись поиск
+            @RequestParam(required = false) String rangeStart, // дата и время не раньше которых должно произойти событие
+            @RequestParam(required = false) String rangeEnd, // дата и время не позже которых должно произойти событие
             @RequestParam(required = false, defaultValue = "0") Integer from, // количество событий, которые нужно пропустить для формирования текущего набора
             @RequestParam(required = false, defaultValue = "10") Integer size) { // количество событий в наборе
         log.info("Поиск событий по параметрам: " +

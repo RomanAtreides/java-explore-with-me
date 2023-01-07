@@ -95,19 +95,7 @@ public class EventPublicServiceImpl implements EventPublicService {
         }
 
         // Если диапазон дат не указан, то будут возвращены события, которые произойдут позже текущей даты и времени
-        if (rangeStart == null && rangeEnd == null) {
-            query = query.where(qEvent.eventDate.after(LocalDateTime.now()));
-        } else {
-            // Дата и время не раньше которых должно произойти событие
-            if (rangeStart != null) {
-                query = query.where(qEvent.eventDate.after(LocalDateTime.parse(rangeStart, Common.FORMATTER)));
-            }
-
-            // Дата и время не позже которых должно произойти событие
-            if (rangeEnd != null) {
-                query = query.where(qEvent.eventDate.before(LocalDateTime.parse(rangeEnd, Common.FORMATTER)));
-            }
-        }
+        query = setDatesForQuery(rangeStart, rangeEnd, query, qEvent);
 
         // Только события у которых не исчерпан лимит запросов на участие
         if (onlyAvailable) {
@@ -162,6 +150,23 @@ public class EventPublicServiceImpl implements EventPublicService {
         Event entity = eventRepository.save(event);
 
         return EventMapper.eventToEventFullDto(entity);
+    }
+
+    public JPAQuery<Event> setDatesForQuery(String rangeStart, String rangeEnd, JPAQuery<Event> query, QEvent qEvent) {
+        if (rangeStart == null && rangeEnd == null) {
+            query = query.where(qEvent.eventDate.after(LocalDateTime.now()));
+        } else {
+            // Дата и время не раньше которых должно произойти событие
+            if (rangeStart != null) {
+                query = query.where(qEvent.eventDate.after(LocalDateTime.parse(rangeStart, Common.FORMATTER)));
+            }
+
+            // Дата и время не позже которых должно произойти событие
+            if (rangeEnd != null) {
+                query = query.where(qEvent.eventDate.before(LocalDateTime.parse(rangeEnd, Common.FORMATTER)));
+            }
+        }
+        return query;
     }
 
     private void buildAndSaveEndpointHit(String endpointPath, String clientIp) {

@@ -1,31 +1,39 @@
 package ru.practicum.ewm.event.service;
 
+import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.category.CategoryMapper;
 import ru.practicum.ewm.category.service.CategoryPublicService;
+import ru.practicum.ewm.event.AdminUpdateEventRequest;
 import ru.practicum.ewm.event.EventMapper;
-import ru.practicum.ewm.event.state.EventState;
 import ru.practicum.ewm.event.EventValidator;
 import ru.practicum.ewm.event.dto.EventFullDto;
 import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.event.model.Location;
+import ru.practicum.ewm.event.model.QEvent;
 import ru.practicum.ewm.event.repository.EventRepository;
+import ru.practicum.ewm.event.state.EventState;
 import ru.practicum.ewm.exception.ValidationException;
-import ru.practicum.ewm.event.AdminUpdateEventRequest;
 
+import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class EventAdminServiceImpl implements EventAdminService {
 
+    private final EntityManager entityManager;
     private final EventValidator eventValidator;
     private final EventRepository eventRepository;
     private final CategoryPublicService categoryPublicService;
+    private final EventPublicService eventPublicService;
 
     @Override
     @Transactional(readOnly = true)
@@ -37,8 +45,35 @@ public class EventAdminServiceImpl implements EventAdminService {
             String rangeEnd,
             Integer from,
             Integer size) {
-        // Эндпоинт возвращает полную информацию обо всех событиях подходящих под переданные условия
-        return null; // TODO: 01.01.2023 Реализовать метод
+        QEvent qEvent = QEvent.event;
+        //QParticipationRequest qRequest = QParticipationRequest.participationRequest;
+        JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
+
+        JPAQuery<Event> query = queryFactory.select(qEvent)
+                .from(qEvent);
+
+        if (users != null) {
+            query = query.where(qEvent.initiator.id.in(users));
+        }
+
+        if (states != null) {
+            query = query.where(qEvent.state.in(Arrays.stream(states)
+                    .map(EventState::from)
+                    .collect(Collectors.toList())));
+        }
+
+        if (categories != null) {
+            query = query.where(qEvent.category.id.in(categories));
+        }
+
+        // Если диапазон дат не указан, то будут возвращены события, которые произойдут позже текущей даты и времени
+        query = eventPublicService.setDatesForQuery(rangeStart, rangeEnd, query, qEvent);
+        query = query.limit(size).offset(from);
+        List<Event> events = query.fetch();
+
+        return events.stream()
+                .map(EventMapper::eventToEventFullDto)
+                .collect(Collectors.toList());
     }
 
     @Override
