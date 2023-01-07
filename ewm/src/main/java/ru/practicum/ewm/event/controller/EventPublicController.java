@@ -18,24 +18,19 @@ public class EventPublicController {
 
     private final EventPublicService eventPublicService;
 
-    // Из ТЗ:
-    // Каждый публичный запрос для получения списка событий
-    // или полной информации о мероприятии
-    // должен фиксироваться сервисом статистики
-
     // Получение событий с возможностью фильтрации
     @GetMapping
     public List<EventShortDto> findFilteredEvents(
-            @RequestParam(required = false) String text,              // текст для поиска в содержимом аннотации и подробном описании события
-            @RequestParam(required = false) Long[] categories,        // список идентификаторов категорий в которых будет вестись поиск
-            @RequestParam(required = false) Boolean paid,             // поиск только платных/бесплатных событий
-            @RequestParam(required = false) String rangeStart,        // дата и время не раньше которых должно произойти событие
-            @RequestParam(required = false) String rangeEnd,          // дата и время не позже которых должно произойти событие
-            @RequestParam(required = false, defaultValue = "false") Boolean onlyAvailable,    // только события у которых не исчерпан лимит запросов на участие
-            @RequestParam(required = false) String sort,                                              // Вариант сортировки: по дате события или по количеству просмотров; EVENT_DATE, VIEWS
-            @RequestParam(required = false, defaultValue = "0") Integer from,       // количество событий, которые нужно пропустить для формирования текущего набора
+            @RequestParam(required = false) String text,
+            @RequestParam(required = false) Long[] categories,
+            @RequestParam(required = false) Boolean paid,
+            @RequestParam(required = false) String rangeStart,
+            @RequestParam(required = false) String rangeEnd,
+            @RequestParam(required = false, defaultValue = "false") Boolean onlyAvailable,
+            @RequestParam(required = false) String sort,
+            @RequestParam(required = false, defaultValue = "0") Integer from,
             @RequestParam(required = false, defaultValue = "10") Integer size,
-            HttpServletRequest request) {    // количество событий в наборе
+            HttpServletRequest request) {
         log.info("Получение событий с возможностью фильтрации");
         return eventPublicService.findFilteredEvents(
                 text,

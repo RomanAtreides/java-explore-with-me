@@ -71,8 +71,6 @@ public class EventPublicServiceImpl implements EventPublicService {
 
         // TODO: 06.01.2023 информация о каждом событии должна включать в себя количество просмотров
         //  и количество уже одобренных заявок на участие
-        // TODO: 06.01.2023 информацию о том, что по этому эндпоинту был осуществлен и обработан запрос,
-        //  нужно сохранить в сервисе статистики
 
         // Должны быть только опубликованные события
         JPAQuery<Event> query = queryFactory.select(qEvent).from(qEvent).where(qEvent.state.eq(EventState.PUBLISHED));

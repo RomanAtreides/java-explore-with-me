@@ -3,10 +3,10 @@ package ru.practicum.ewm.request.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.ewm.event.state.EventState;
 import ru.practicum.ewm.event.EventValidator;
-import ru.practicum.ewm.event.state.ParticipationStatus;
 import ru.practicum.ewm.event.model.Event;
+import ru.practicum.ewm.event.state.EventState;
+import ru.practicum.ewm.event.state.ParticipationStatus;
 import ru.practicum.ewm.exception.EntityAlreadyExistsException;
 import ru.practicum.ewm.exception.ValidationException;
 import ru.practicum.ewm.request.ParticipationRequestMapper;
@@ -28,7 +28,6 @@ public class ParticipationRequestPrivateServiceImpl implements ParticipationRequ
 
     private final ParticipationRequestRepository participationRequestRepository;
     private final UserAdminService userAdminService;
-
     private final EventValidator eventValidator;
 
     @Override
@@ -47,37 +46,43 @@ public class ParticipationRequestPrivateServiceImpl implements ParticipationRequ
         ParticipationRequest existingRequest = participationRequestRepository
                 .findParticipationRequestByEventIdAndRequesterId(userId, eventId);
 
-        // нельзя добавить повторный запрос
+        // Нельзя добавить повторный запрос
         if (existingRequest != null) {
             throw new EntityAlreadyExistsException(String.format(
-                    "Заявка на участие в событии с id=%d пользователем с id=%d уже существует", eventId, userId
+                    "Заявка на участие в событии с id=%d пользователем с id=%d уже существует",
+                    eventId, userId
             ));
         }
 
         Event event = eventValidator.getEventIfExists(eventId);
 
-        // инициатор события не может добавить запрос на участие в своём событии
+        // Инициатор события не может добавить запрос на участие в своём событии
         if (event.getInitiator().getId().equals(userId)) {
             throw new ValidationException(String.format(
-                    "Пользователь с id=%d не может добавить запрос на участие в своём событии с id=%d", userId, eventId
+                    "Пользователь с id=%d не может добавить запрос на участие в своём событии с id=%d",
+                    userId, eventId
             ));
         }
 
         // нельзя участвовать в неопубликованном событии
         if (!event.getState().equals(EventState.PUBLISHED)) {
             throw new ValidationException(String.format(
-                    "Нельзя оставить запрос на участие в неопубликованном событии с id=%d", eventId
+                    "Нельзя оставить запрос на участие в неопубликованном событии с id=%d",
+                    eventId
             ));
         }
 
-        // если у события достигнут лимит запросов на участие - необходимо вернуть ошибку
-        if (event.getConfirmedRequests() + 1 > event.getParticipantLimit() && event.getParticipantLimit() != 0) {
+        // Если у события достигнут лимит запросов на участие, необходимо вернуть ошибку
+        Integer participantLimit = event.getParticipantLimit();
+
+        if (event.getConfirmedRequests() + 1 > participantLimit && participantLimit != 0) {
             throw new ValidationException(String.format(
-                    "Достигнут лимит запросов на участие в событии с id=%d", eventId
+                    "Достигнут лимит запросов на участие в событии с id=%d",
+                    eventId
             ));
         }
 
-        // если для события отключена пре-модерация запросов на участие,
+        // Если для события отключена пре-модерация запросов на участие,
         // то запрос должен автоматически перейти в состояние подтвержденного
         ParticipationStatus status = event.isRequestModeration() ?
                 ParticipationStatus.PENDING :
@@ -92,7 +97,9 @@ public class ParticipationRequestPrivateServiceImpl implements ParticipationRequ
                 .requester(requester)
                 .status(status)
                 .build();
+
         final ParticipationRequest entity = participationRequestRepository.save(request);
+
         return ParticipationRequestMapper.toParticipationRequestDto(entity);
     }
 
