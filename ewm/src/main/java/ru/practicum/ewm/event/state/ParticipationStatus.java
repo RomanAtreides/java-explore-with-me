@@ -2,6 +2,7 @@ package ru.practicum.ewm.event.state;
 
 public enum ParticipationStatus {
 
+    CANCELED,                       // Отменено создателем заявки
     CONFIRMED,                      // Подтверждена
     DOES_NOT_REQUIRE_CONFIRMATION,  // Не требует подтверждения
     PENDING,                        // На рассмотрении

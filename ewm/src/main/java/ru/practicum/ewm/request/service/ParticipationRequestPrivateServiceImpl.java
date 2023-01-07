@@ -106,6 +106,18 @@ public class ParticipationRequestPrivateServiceImpl implements ParticipationRequ
     @Override
     @Transactional
     public ParticipationRequestDto cancelParticipationRequest(Long userId, Long requestId) {
-        return null; // TODO: 01.01.2023 Реализовать метод
+        ParticipationRequest request = participationRequestRepository
+                .findParticipationRequestByIdAndRequesterId(requestId, userId);
+
+        if (!request.getStatus().equals(ParticipationStatus.PENDING)) {
+            throw new ValidationException(
+                    "Отменить можно только заявку находящуюся на рассмотрении"
+            );
+        }
+        request.setStatus(ParticipationStatus.CANCELED);
+
+        ParticipationRequest entity = participationRequestRepository.save(request);
+
+        return ParticipationRequestMapper.toParticipationRequestDto(entity);
     }
 }

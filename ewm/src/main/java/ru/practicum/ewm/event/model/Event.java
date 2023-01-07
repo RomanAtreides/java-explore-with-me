@@ -30,7 +30,6 @@ public class Event {
     @ManyToOne // Много событий может быть с одинаковой категорией
     @JoinColumn(name = "category_id")
     private Category category; // Категория; id + name
-    // private CategoryDto category; // Категория; id + name
 
     @Column(name = "confirmed_requests")
     private Long confirmedRequests; // Количество одобренных заявок на участие в данном событии

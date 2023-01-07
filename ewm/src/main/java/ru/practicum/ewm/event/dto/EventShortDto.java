@@ -14,25 +14,24 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-// Краткая информация о событии
 public class EventShortDto {
 
-    private String annotation; // Краткое описание
+    private String annotation;
 
-    private CategoryDto category; // Категория; id + name
+    private CategoryDto category;
 
-    private Long confirmedRequests; // Количество одобренных заявок на участие в данном событии
+    private Long confirmedRequests;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime eventDate; // Дата и время на которые намечено событие (в формате "yyyy-MM-dd HH:mm:ss"), example: 2024-12-31 15:10:05
+    private LocalDateTime eventDate;
 
-    private Long id; // Идентификатор
+    private Long id;
 
-    private UserShortDto initiator; // Пользователь (краткая информация); id + name!
+    private UserShortDto initiator;
 
-    private boolean paid; // Нужно ли оплачивать участие
+    private Boolean paid;
 
-    private String title; // Заголовок; example: Знаменитое шоу 'Летающая кукуруза'
+    private String title;
 
-    private Long views; // Количество просмотрев события
+    private Long views;
 }
