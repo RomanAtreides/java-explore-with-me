@@ -116,7 +116,7 @@ public class EventPrivateServiceImpl implements EventPrivateService {
         checkEventDate(newEventDto.getEventDate());
 
         UserDto userDto = userAdminService.findUsers(new Long[]{userId}, 0, 1).get(0);
-        final User initiator = UserMapper.toUser(userDto);
+        final User initiator = UserMapper.userDtoToUser(userDto);
 
         final Category category = CategoryMapper.categoryDtoToCategory(
                 categoryPublicService.findCategoryById(newEventDto.getCategory())

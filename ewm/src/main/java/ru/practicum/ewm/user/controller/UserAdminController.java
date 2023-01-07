@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.ewm.user.dto.NewUserRequest;
 import ru.practicum.ewm.user.dto.UserDto;
 import ru.practicum.ewm.user.service.UserAdminService;
 import ru.practicum.ewm.utility.marker.Create;
@@ -30,8 +31,8 @@ public class UserAdminController {
 
     // Admin: Users - Добавление нового пользователя
     @PostMapping
-    public UserDto addNewUser(@RequestBody @Validated(Create.class) UserDto userDto) {
-        UserDto newUserDto = userService.addNewUser(userDto);
+    public UserDto addNewUser(@RequestBody @Validated(Create.class) NewUserRequest newUserRequest) {
+        UserDto newUserDto = userService.addNewUser(newUserRequest);
 
         log.info("Добавление нового пользователя {}", newUserDto);
         return newUserDto;
@@ -43,40 +44,4 @@ public class UserAdminController {
         log.info("Удаление пользователя с id={}", userId);
         userService.deleteUser(userId);
     }
-
-    // public:
-    // events
-    // compilations
-    // categories
-
-    // private:
-    // events
-    // requests
-
-    // admin:
-    // events
-    // categories
-    // users
-    // compilations
-
-    // total entities:
-    // categories
-    // compilations
-    // events
-    // requests
-    // users
-
-// Админ:   события
-    // get      /admin/events - Поиск событий
-    // put      /admin/events/{eventId} - Редактирование события
-    // patch    /admin/events/{eventId}/publish - Публикация события
-    // patch    /admin/events/{eventId}/reject - Отклонение события
-
-// Админ:   Подборки событий
-    // post     /admin/compilations - Добавление новой подборки
-    // delete   /admin/compilations/{compId} - Удаление подборки
-    // delete   /admin/compilations/{compId}/events/{eventId} - Удалить событие из подборки
-    // patch    /admin/compilations/{compId}/events/{eventId} - Добавить событие в подборку
-    // delete   /admin/compilations/{compId}/pin - Открепить подборку на главной странице
-    // patch    /admin/compilations/{compId}/pin - Закрепить подборку на главной странице
 }

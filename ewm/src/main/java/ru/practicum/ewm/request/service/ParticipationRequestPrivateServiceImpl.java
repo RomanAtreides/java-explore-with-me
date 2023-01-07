@@ -64,7 +64,7 @@ public class ParticipationRequestPrivateServiceImpl implements ParticipationRequ
             ));
         }
 
-        // нельзя участвовать в неопубликованном событии
+        // Нельзя участвовать в неопубликованном событии
         if (!event.getState().equals(EventState.PUBLISHED)) {
             throw new ValidationException(String.format(
                     "Нельзя оставить запрос на участие в неопубликованном событии с id=%d",
@@ -82,13 +82,16 @@ public class ParticipationRequestPrivateServiceImpl implements ParticipationRequ
             ));
         }
 
-        // Если для события отключена пре-модерация запросов на участие,
-        // то запрос должен автоматически перейти в состояние подтвержденного
+        /*
+         * Если для события отключена пре-модерация запросов на участие,
+         * то запрос должен автоматически перейти в состояние подтвержденного
+         */
         ParticipationStatus status = event.isRequestModeration() ?
                 ParticipationStatus.PENDING :
                 ParticipationStatus.CONFIRMED;
 
-        User requester = UserMapper.toUser(userAdminService.findUsers(new Long[]{userId}, 0, 1).get(0));
+        User requester = UserMapper
+                .userDtoToUser(userAdminService.findUsers(new Long[]{userId}, 0, 1).get(0));
 
         final ParticipationRequest request = ParticipationRequest.builder()
                 .id(null)

@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.exception.EntityNotFoundException;
 import ru.practicum.ewm.exception.ValidationException;
 import ru.practicum.ewm.user.UserMapper;
+import ru.practicum.ewm.user.dto.NewUserRequest;
 import ru.practicum.ewm.user.dto.UserDto;
 import ru.practicum.ewm.user.model.User;
 import ru.practicum.ewm.user.repository.UserRepository;
@@ -24,8 +25,8 @@ public class UserAdminServiceImpl implements UserAdminService {
 
     @Override
     @Transactional
-    public UserDto addNewUser(UserDto userDto) {
-        final User user = UserMapper.toUser(userDto);
+    public UserDto addNewUser(NewUserRequest newUserRequest) {
+        final User user = UserMapper.toUser(newUserRequest);
         final User entity = userRepository.save(user);
 
         return UserMapper.toUserDto(entity);
