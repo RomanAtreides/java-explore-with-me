@@ -18,37 +18,34 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-// Новое событие
 public class NewEventDto {
 
     @Size(min = 20, max = 2000, groups = Create.class)
     @NotNull(groups = Create.class)
-    private String annotation; // Краткое описание; maxLength: 2000, minLength: 20; example: Сплав на байдарках похож на полет
+    private String annotation;
 
-    private Long category; // id категории к которой относится событие
+    private Long category;
 
     @Size(min = 20, max = 7000, groups = Create.class)
-    private String description; // Полное описание события; maxLength: 7000, minLength: 20
+    private String description;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @Future(groups = Create.class)
-    private LocalDateTime eventDate; // Дата и время на которые намечено событие (в формате "yyyy-MM-dd HH:mm:ss"); example: 2024-12-31 15:10:05
+    private LocalDateTime eventDate;
 
-    private Location location; // Широта и долгота места проведения события; lat + lon
+    private Location location;
 
     @Value("false")
-    private boolean paid; // Нужно ли оплачивать участие; default: false
+    private boolean paid;
 
     @Value("0")
-    private Integer participantLimit; // Ограничение на количество участников. Значение 0 - означает отсутствие ограничения; default: 0
+    private Integer participantLimit;
 
     @Value("true")
-    private boolean requestModeration; // Нужна ли пре-модерация заявок на участие; default: true
-    // Если true, то все заявки будут ожидать подтверждения инициатором события.
-    // Если false - то будут подтверждаться автоматически;
+    private boolean requestModeration;
 
     @Size(min = 3, max = 120, groups = Create.class)
-    private String title; // Заголовок события; example: Сплав на байдарках; maxLength: 120, minLength: 3
+    private String title;
 
     @Override
     public String toString() {

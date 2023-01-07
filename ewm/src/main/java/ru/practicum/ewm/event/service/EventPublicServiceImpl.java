@@ -204,6 +204,17 @@ public class EventPublicServiceImpl implements EventPublicService {
         return URLEncoder.encode(value, StandardCharsets.UTF_8);
     }
 
+    /*
+     *  С.Савельев - вебинар по архитектуре - 1 часть:
+     *  confirmedRequests - количество одобренных заявок на участие в данном событии
+     *  1. Не нужно для каждого события делать отдельный запрос в БД
+     *  2. Нужно сделать один запрос сразу для всех событий с помощью оператора IN и уже из ответа сгуруппировать по
+     *  событиям эти заявки
+     *
+     *  Также не стоит забывать про QueryDSL для динамических запросов (когда мы на этапе
+     *  написания кода не знаем, по каким полям будет фильтрация)
+     */
+
     /*private List<EventShortDto> getShortEventsFromTuple(List<Tuple> tuples) {
         return tuples.stream()
                 .map(tuple -> new EventShortDto(

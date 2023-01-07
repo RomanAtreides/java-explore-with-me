@@ -20,7 +20,7 @@ import ru.practicum.ewm.exception.AccessException;
 import ru.practicum.ewm.exception.EntityNotFoundException;
 import ru.practicum.ewm.exception.ValidationException;
 import ru.practicum.ewm.request.ParticipationRequestMapper;
-import ru.practicum.ewm.event.UpdateEventRequest;
+import ru.practicum.ewm.event.dto.UpdateEventRequest;
 import ru.practicum.ewm.request.dto.ParticipationRequestDto;
 import ru.practicum.ewm.request.model.ParticipationRequest;
 import ru.practicum.ewm.request.repository.ParticipationRequestRepository;
@@ -49,6 +49,7 @@ public class EventPrivateServiceImpl implements EventPrivateService {
     public List<EventShortDto> findUserEvents(Long userId, Integer from, Integer size) {
         Pageable pageable = FromSizeRequest.of(from, size);
         List<Event> events = eventRepository.findEventsByInitiatorId(userId, pageable);
+
         return events.stream()
                 .map(EventMapper::eventToEventShortDto)
                 .collect(Collectors.toList());
@@ -57,20 +58,20 @@ public class EventPrivateServiceImpl implements EventPrivateService {
     @Override
     @Transactional
     public EventFullDto changeEvent(Long userId, UpdateEventRequest updateEventRequest) {
-        // изменить можно только отмененные события или события в состоянии ожидания модерации
         Event eventToUpdate = getEventIfExists(updateEventRequest.getEventId());
         EventState state = eventToUpdate.getState();
 
+        // Изменить можно только отмененные события или события в состоянии ожидания модерации
         if (state.equals(EventState.PUBLISHED)) {
-            throw new AccessException("Только события находящиеся на модерации могут быть изменены");
+            throw new ValidationException("Только события находящиеся на модерации могут быть изменены");
         }
 
-        // если редактируется отменённое событие, то оно автоматически переходит в состояние ожидания модерации
+        // Если редактируется отменённое событие, то оно автоматически переходит в состояние ожидания модерации
         if (state.equals(EventState.CANCELED)) {
             eventToUpdate.setState(EventState.PENDING);
         }
 
-        // дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента
+        // Дата и время на которые намечено событие не может быть раньше, чем через два часа от текущего момента
         LocalDateTime newEventDate = updateEventRequest.getEventDate();
 
         checkEventDate(newEventDate);
@@ -121,13 +122,8 @@ public class EventPrivateServiceImpl implements EventPrivateService {
                 categoryPublicService.findCategoryById(newEventDto.getCategory())
         );
 
-        final Long participationRequestsQuantity = 0L; // Количество одобренных заявок на участие в данном событии
-        // if ParticipationRequestDto.getStatus.equals(ParticipationStatus.CONFIRMED);
-
-        final Long views = 0L; // Взять из сервиса статистики
-
         final Event event = EventMapper.newEventDtoToEvent(
-                newEventDto, initiator, category, participationRequestsQuantity, views
+                newEventDto, initiator, category, 0L, 0L
         );
 
         final Event entity = eventRepository.save(event);
@@ -181,14 +177,16 @@ public class EventPrivateServiceImpl implements EventPrivateService {
         Long confirmedRequests = event.getConfirmedRequests();
         Long canceledRequestsQuantity = 0L;
 
-        // если для события лимит заявок равен 0 или отключена пре-модерация заявок,
-        // то подтверждение заявок не требуется
+        /*
+         * Если для события лимит заявок равен 0 или отключена пре-модерация заявок,
+         * то подтверждение заявок не требуется
+         */
         if (limit == 0 || !event.isRequestModeration()) {
             request.setStatus(ParticipationStatus.DOES_NOT_REQUIRE_CONFIRMATION);
             return Map.of(canceledRequestsQuantity, ParticipationRequestMapper.toParticipationRequestDto(request));
         }
 
-        // нельзя подтвердить заявку, если уже достигнут лимит по заявкам на данное событие
+        // Нельзя подтвердить заявку, если уже достигнут лимит по заявкам на данное событие
         if (confirmedRequests + 1 > limit) {
             request.setStatus(ParticipationStatus.REJECTED);
             return Map.of(canceledRequestsQuantity, ParticipationRequestMapper.toParticipationRequestDto(request));
@@ -196,14 +194,17 @@ public class EventPrivateServiceImpl implements EventPrivateService {
         request.setStatus(ParticipationStatus.CONFIRMED);
         event.setConfirmedRequests(confirmedRequests + 1);
 
-        // если при подтверждении данной заявки, лимит заявок для события исчерпан,
-        // то все неподтверждённые заявки необходимо отклонить
+        /*
+         * Если при подтверждении данной заявки, лимит заявок для события исчерпан,
+         * то все неподтверждённые заявки необходимо отклонить
+         */
         if (confirmedRequests + 1 == limit) {
             canceledRequestsQuantity = participationRequestRepository.findParticipationRequestsByEventId(eventId).stream()
                     .filter(r -> r.getStatus().equals(ParticipationStatus.PENDING))
                     .peek(r -> r.setStatus(ParticipationStatus.REJECTED))
                     .count();
         }
+
         ParticipationRequest consideredRequest = participationRequestRepository.save(request);
 
         return Map.of(canceledRequestsQuantity, ParticipationRequestMapper.toParticipationRequestDto(consideredRequest));
@@ -236,17 +237,14 @@ public class EventPrivateServiceImpl implements EventPrivateService {
 
     private ParticipationRequest getParticipationRequestIfExists(Long reqId) {
         return participationRequestRepository.findById(reqId)
-                .orElseThrow(() -> new EntityNotFoundException(String.format(
-                        "Заявка на участие с id=%d не найдена", reqId
-                )));
+                .orElseThrow(() -> new EntityNotFoundException(String
+                        .format("Заявка на участие с id=%d не найдена", reqId)));
     }
 
     private static void checkEventDate(LocalDateTime newEventDate) {
         if (newEventDate.isBefore(LocalDateTime.now())) {
-            throw new ValidationException(
-                    "Дата и время на которые намечено событие не может быть раньше," +
-                    "чем через два часа от текущего момента"
-            );
+            throw new ValidationException("Дата и время на которые намечено событие " +
+                    "не может быть раньше, чем через два часа от текущего момента");
         }
     }
 

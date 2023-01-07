@@ -18,41 +18,38 @@ import java.time.LocalDateTime;
 @Builder
 public class EventFullDto {
 
-    private String annotation; // Краткое описание
-    private CategoryDto category; // Категория; id + name
-    private Long confirmedRequests; // Количество одобренных заявок на участие в данном событии
+    private String annotation;
+
+    private CategoryDto category;
+
+    private Long confirmedRequests;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime createdOn; // Дата и время создания события (в формате "yyyy-MM-dd HH:mm:ss"); example: 2022-09-06 11:00:23
+    private LocalDateTime createdOn;
 
-    private String description; // Полное описание события
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime eventDate; // Дата и время на которые намечено событие (в формате "yyyy-MM-dd HH:mm:ss"); example: 2024-12-31 15:10:05
-
-    private Long id; // Идентификатор
-    private UserShortDto initiator; // Пользователь (краткая информация); id + name!
-    private Location location; // Широта и долгота места проведения события; lat + lon
-    private boolean paid; // Нужно ли оплачивать участие
-    private Integer participantLimit; // default: 0; Ограничение на количество участников. Значение 0 - означает отсутствие ограничения
+    private String description;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime publishedOn; // Дата и время публикации события (в формате "yyyy-MM-dd HH:mm:ss"); example: 2022-09-06 15:10:05
+    private LocalDateTime eventDate;
 
-    private boolean requestModeration; // default: true; Нужна ли пре-модерация заявок на участие
-    private EventState state; // Список состояний жизненного цикла события; example: PUBLISHED; Enum: [ PENDING, PUBLISHED, CANCELED ]
-    private String title; // Заголовок; example: Знаменитое шоу 'Летающая кукуруза'
-    private Long views; // Количество просмотрев события
+    private Long id;
 
-    /*
-     *  С.Савельев - вебинар по архитектуре - 1 часть:
-     *  confirmedRequests - количество одобренных заявок на участие в данном событии
-     *  1. Не нужно для каждого события делать отдельный запрос в БД
-     *  2. Нужно сделать один запрос сразу для всех событий с помощью оператора IN и уже из ответа сгуруппировать по
-     *  событиям эти заявки
-     *
-     *  Также не стоит забывать про QueryDSL для динамических запросов (когда мы на этапе
-     *  написания кода не знаем, по каким полям будет фильтрация)
-     */
+    private UserShortDto initiator;
 
+    private Location location;
+
+    private boolean paid;
+
+    private Integer participantLimit;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime publishedOn;
+
+    private boolean requestModeration;
+
+    private EventState state;
+
+    private String title;
+
+    private Long views;
 }

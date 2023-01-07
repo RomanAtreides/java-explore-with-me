@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.event.dto.EventFullDto;
 import ru.practicum.ewm.event.service.EventAdminService;
-import ru.practicum.ewm.event.AdminUpdateEventRequest;
+import ru.practicum.ewm.event.dto.AdminUpdateEventRequest;
 
 import java.util.List;
 
@@ -17,17 +17,16 @@ public class EventAdminController {
 
     private final EventAdminService eventAdminService;
 
-    // Admin: Event - Поиск событий
-    // Эндпоинт возвращает полную информацию обо всех событиях подходящих под переданные условия
+    // Admin: Event - Поиск событий подходящих под переданные условия
     @GetMapping
     public List<EventFullDto> findEvents(
-            @RequestParam(required = false) Long[] users, // список id пользователей, чьи события нужно найти
-            @RequestParam(required = false) String[] states, // список состояний в которых находятся искомые события
-            @RequestParam(required = false) Long[] categories, // список id категорий в которых будет вестись поиск
-            @RequestParam(required = false) String rangeStart, // дата и время не раньше которых должно произойти событие
-            @RequestParam(required = false) String rangeEnd, // дата и время не позже которых должно произойти событие
-            @RequestParam(required = false, defaultValue = "0") Integer from, // количество событий, которые нужно пропустить для формирования текущего набора
-            @RequestParam(required = false, defaultValue = "10") Integer size) { // количество событий в наборе
+            @RequestParam(required = false) Long[] users,
+            @RequestParam(required = false) String[] states,
+            @RequestParam(required = false) Long[] categories,
+            @RequestParam(required = false) String rangeStart,
+            @RequestParam(required = false) String rangeEnd,
+            @RequestParam(required = false, defaultValue = "0") Integer from,
+            @RequestParam(required = false, defaultValue = "10") Integer size) {
         log.info("Поиск событий по параметрам: " +
                         "users={}, states={}, categories={}, rangeStart={}, rangeEnd={}, from={}, size={}",
                 users, states, categories, rangeStart, rangeEnd, from, size);

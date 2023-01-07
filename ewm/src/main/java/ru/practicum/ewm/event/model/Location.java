@@ -10,9 +10,8 @@ import javax.persistence.Embeddable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Embeddable
-// Широта и долгота места проведения события
 public class Location {
 
-    private Float lat; // Широта
-    private Float lon; // Долгота
+    private Float lat;
+    private Float lon;
 }

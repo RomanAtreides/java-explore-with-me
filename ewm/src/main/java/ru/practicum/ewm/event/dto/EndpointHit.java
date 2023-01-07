@@ -16,12 +16,12 @@ public class EndpointHit {
 
     private Long id;
 
-    private String app; // Идентификатор сервиса для которого записывается информация
+    private String app;
 
-    private String uri; // URI для которого был осуществлен запрос
+    private String uri;
 
-    private String ip; // IP-адрес пользователя, осуществившего запрос
+    private String ip;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime timestamp; // Дата и время, когда был совершен запрос к ручке (в формате "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime timestamp;
 }

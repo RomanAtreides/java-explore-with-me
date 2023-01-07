@@ -1,4 +1,4 @@
-package ru.practicum.ewm.event;
+package ru.practicum.ewm.event.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
@@ -16,31 +16,30 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @NotNull(groups = Update.class)
-// Данные для изменения информации о событии
 public class UpdateEventRequest {
 
     @Size(min = 20, max = 2000, groups = Update.class)
-    private String annotation; // Новая аннотация; maxLength: 2000, minLength: 20
+    private String annotation;
 
-    private Long category; // Новая категория; example: 3
+    private Long category;
 
     @Size(min = 20, max = 7000, groups = Update.class)
-    private String description; // Новое описание; maxLength: 7000, minLength: 20
+    private String description;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @Future(groups = Update.class)
-    private LocalDateTime eventDate; // Дата и время на которые намечено событие (в формате "yyyy-MM-dd HH:mm:ss"); example: 2024-12-31 15:10:05
+    private LocalDateTime eventDate;
 
-    private Long eventId; // Идентификатор события; example: 1
+    private Long eventId;
 
     @Value("false")
-    private boolean paid; // Новое значение флага о платности мероприятия
+    private boolean paid;
 
     @Value("0")
-    private Integer participantLimit; // Новый лимит пользователей. Значение 0 - означает отсутствие ограничения; default: 0
+    private Integer participantLimit;
 
     @Size(min = 3, max = 120, groups = Update.class)
-    private String title; // Новый заголовок; example: Сплав на байдарках; maxLength: 120, minLength: 3
+    private String title;
 
     @Override
     public String toString() {

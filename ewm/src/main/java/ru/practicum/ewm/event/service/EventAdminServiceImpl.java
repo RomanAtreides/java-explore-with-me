@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.category.CategoryMapper;
 import ru.practicum.ewm.category.service.CategoryPublicService;
-import ru.practicum.ewm.event.AdminUpdateEventRequest;
+import ru.practicum.ewm.event.dto.AdminUpdateEventRequest;
 import ru.practicum.ewm.event.EventMapper;
 import ru.practicum.ewm.event.EventValidator;
 import ru.practicum.ewm.event.dto.EventFullDto;
@@ -78,7 +78,6 @@ public class EventAdminServiceImpl implements EventAdminService {
 
     @Override
     public EventFullDto changeEvent(Long eventId, AdminUpdateEventRequest request) {
-        // Редактирование данных любого события администратором. Валидация данных не требуется
         Event event = eventValidator.getEventIfExists(eventId);
 
         String newAnnotation = request.getAnnotation();
@@ -139,19 +138,13 @@ public class EventAdminServiceImpl implements EventAdminService {
         Event event = eventValidator.getEventIfExists(eventId);
         LocalDateTime publishDateTime = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
 
-        // дата начала события должна быть не ранее чем за час от даты публикации
+        // Дата начала события должна быть не ранее чем за час от даты публикации
         if (publishDateTime.plusHours(1L).isAfter(event.getEventDate())) {
             throw new ValidationException(String.format(
                     "Дата начала события с id=%d должна быть не ранее чем за час от даты публикации", eventId
             ));
         }
-
-        // событие должно быть в состоянии ожидания публикации
-        if (!event.getState().equals(EventState.PENDING)) {
-            throw new ValidationException(String.format(
-                    "Событие с id=%d должно быть в состоянии ожидания публикации", eventId
-            ));
-        }
+        checkIfEventIsPending(event, eventId);
         event.setPublishedOn(publishDateTime);
         event.setState(EventState.PUBLISHED);
         return EventMapper.eventToEventFullDto(eventRepository.save(event));
@@ -161,13 +154,17 @@ public class EventAdminServiceImpl implements EventAdminService {
     public EventFullDto rejectEvent(Long eventId) {
         Event event = eventValidator.getEventIfExists(eventId);
 
-        // Обратите внимание: событие не должно быть опубликовано
-        if (event.getState().equals(EventState.PUBLISHED)) {
-            throw new ValidationException(String.format(
-                    "Событие с id=%d должно быть в состоянии ожидания публикации", eventId));
-        }
+        checkIfEventIsPending(event, eventId);
         event.setState(EventState.CANCELED);
         Event entity = eventRepository.save(event);
         return EventMapper.eventToEventFullDto(entity);
+    }
+
+    private void checkIfEventIsPending(Event event, Long eventId) {
+        if (!event.getState().equals(EventState.PENDING)) {
+            throw new ValidationException(String.format(
+                    "Событие с id=%d должно быть в состоянии ожидания публикации", eventId
+            ));
+        }
     }
 }
