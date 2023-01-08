@@ -22,21 +22,21 @@ public class ParticipationRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Long id; // Идентификатор заявки
+    private Long id;
 
     @Column(name = "created")
-    private LocalDateTime created; // Дата и время создания заявки; example: 2022-09-06T21:10:05.432
+    private LocalDateTime created;
 
     @ManyToOne
     @JoinColumn(name = "event_id")
-    private Event event; // Идентификатор события
+    private Event event;
 
     @ManyToOne
     @JoinColumn(name = "requester_id")
-    private User requester; // Идентификатор пользователя, отправившего заявку
+    private User requester;
 
     @Enumerated(EnumType.STRING)
-    private ParticipationStatus status; // Статус заявки
+    private ParticipationStatus status;
 
     @Override
     public String toString() {

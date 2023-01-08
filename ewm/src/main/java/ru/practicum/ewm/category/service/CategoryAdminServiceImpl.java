@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.category.CategoryMapper;
+import ru.practicum.ewm.category.CategoryValidator;
 import ru.practicum.ewm.category.dto.CategoryDto;
 import ru.practicum.ewm.category.dto.NewCategoryDto;
 import ru.practicum.ewm.category.model.Category;
@@ -15,13 +16,14 @@ import ru.practicum.ewm.category.repository.CategoryRepository;
 public class CategoryAdminServiceImpl implements CategoryAdminService {
 
     private final CategoryRepository categoryRepository;
+    private final CategoryValidator categoryValidator;
 
     @Override
     public CategoryDto changeCategory(CategoryDto categoryDto) {
-        Category category = categoryRepository.findById(categoryDto.getId())
-                .orElseThrow(() -> new RuntimeException("Категория не найдена"));
+        Long catId = categoryDto.getId();
+        Category category = categoryValidator.getCategoryIfExists(catId);
 
-        category.setId(categoryDto.getId());
+        category.setId(catId);
         category.setName(categoryDto.getName());
         return CategoryMapper.toCategoryDto(category);
     }
@@ -36,10 +38,7 @@ public class CategoryAdminServiceImpl implements CategoryAdminService {
 
     @Override
     public void deleteCategory(Long catId) {
-        Category category = categoryRepository.findById(catId)
-                .orElseThrow(() -> new RuntimeException(String.format(
-                        "Категория с id=%d не найдена", catId
-                )));
+        Category category = categoryValidator.getCategoryIfExists(catId);
 
         categoryRepository.delete(category);
     }

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import ru.practicum.ewm.compilation.model.Compilation;
 import ru.practicum.ewm.compilation.repository.CompilationRepository;
 import ru.practicum.ewm.exception.EntityNotFoundException;
+import ru.practicum.ewm.exception.ValidationException;
 
 @Component
 @RequiredArgsConstructor
@@ -16,9 +17,9 @@ public class CompilationValidator {
         String exceptionMessage = String.format("Подборка с id=%d не найдена", compId);
 
         if (compId == null) {
-            throw new EntityNotFoundException(exceptionMessage);
+            throw new ValidationException(exceptionMessage);
         }
         return compilationRepository.findById(compId)
-                .orElseThrow(() -> new EntityNotFoundException(exceptionMessage));
+                .orElseThrow(() -> new EntityNotFoundException(String.format(exceptionMessage)));
     }
 }

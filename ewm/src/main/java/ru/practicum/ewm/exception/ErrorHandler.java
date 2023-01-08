@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.practicum.ewm.utility.Common;
+import ru.practicum.ewm.utility.DateTimeForm;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -24,7 +24,7 @@ public class ErrorHandler {
                 exception.getMessage(),
                 "Неверный запрос",
                 HttpStatus.BAD_REQUEST.toString(),
-                LocalDateTime.now().format(Common.FORMATTER)
+                LocalDateTime.now().format(DateTimeForm.FORMATTER)
         );
     }
 
@@ -37,7 +37,7 @@ public class ErrorHandler {
                 exception.getMessage(),
                 "Ошибка доступа",
                 HttpStatus.FORBIDDEN.toString(),
-                LocalDateTime.now().format(Common.FORMATTER)
+                LocalDateTime.now().format(DateTimeForm.FORMATTER)
         );
     }
 
@@ -50,7 +50,7 @@ public class ErrorHandler {
                 exception.getMessage(),
                 "Требуемый объект не найден",
                 HttpStatus.NOT_FOUND.toString(),
-                LocalDateTime.now().format(Common.FORMATTER)
+                LocalDateTime.now().format(DateTimeForm.FORMATTER)
         );
     }
 
@@ -63,7 +63,7 @@ public class ErrorHandler {
                 exception.getMessage(),
                 "Конфликт данных",
                 HttpStatus.CONFLICT.toString(),
-                LocalDateTime.now().format(Common.FORMATTER)
+                LocalDateTime.now().format(DateTimeForm.FORMATTER)
         );
     }
 
@@ -76,7 +76,7 @@ public class ErrorHandler {
                 exception.getMessage(),
                 "Ошибка сервера",
                 HttpStatus.INTERNAL_SERVER_ERROR.toString(),
-                LocalDateTime.now().format(Common.FORMATTER)
+                LocalDateTime.now().format(DateTimeForm.FORMATTER)
         );
     }
 }

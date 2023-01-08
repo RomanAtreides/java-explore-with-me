@@ -10,6 +10,7 @@ import javax.validation.constraints.NotNull;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@NotNull(groups = Create.class)
 public class NewUserRequest {
 
     @NotNull(groups = Create.class)

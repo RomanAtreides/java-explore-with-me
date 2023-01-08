@@ -37,7 +37,7 @@ public class CompilationPublicServiceImpl implements CompilationPublicService {
 
     @Override
     public CompilationDto findCompilationById(Long compId) {
-        Compilation compilation = compilationValidator.findCompilationIfExists(compId);
+        final Compilation compilation = compilationValidator.findCompilationIfExists(compId);
 
         return CompilationMapper.compilationToCompilationDto(compilation);
     }

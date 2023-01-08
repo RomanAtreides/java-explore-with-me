@@ -13,17 +13,16 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-// Заявка на участие в событии
 public class ParticipationRequestDto {
 
-    private Long id; // Идентификатор заявки
+    private Long id;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime created; // Дата и время создания заявки; example: 2022-09-06T21:10:05.432
+    private LocalDateTime created;
 
-    private Long event; // Идентификатор события
+    private Long event;
 
-    private Long requester; // Идентификатор пользователя, отправившего заявку
+    private Long requester;
 
-    private ParticipationStatus status; // Статус заявки
+    private ParticipationStatus status;
 }

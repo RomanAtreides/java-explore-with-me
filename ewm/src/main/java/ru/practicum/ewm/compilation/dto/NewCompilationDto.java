@@ -11,6 +11,7 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@NotNull(groups = Create.class)
 public class NewCompilationDto {
 
     private Set<Long> events;

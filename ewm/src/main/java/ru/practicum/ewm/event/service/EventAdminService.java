@@ -6,6 +6,7 @@ import ru.practicum.ewm.event.dto.AdminUpdateEventRequest;
 import java.util.List;
 
 public interface EventAdminService {
+
     List<EventFullDto> findEvents(
             Long[] users,
             String[] states,

@@ -24,7 +24,7 @@ import ru.practicum.ewm.event.state.EventSortOption;
 import ru.practicum.ewm.event.state.EventState;
 import ru.practicum.ewm.event.state.ParticipationStatus;
 import ru.practicum.ewm.request.model.QParticipationRequest;
-import ru.practicum.ewm.utility.Common;
+import ru.practicum.ewm.utility.DateTimeForm;
 
 import javax.persistence.EntityManager;
 import java.net.URLEncoder;
@@ -143,12 +143,12 @@ public class EventPublicServiceImpl implements EventPublicService {
         } else {
             // Дата и время не раньше которых должно произойти событие
             if (rangeStart != null) {
-                query = query.where(qEvent.eventDate.after(LocalDateTime.parse(rangeStart, Common.FORMATTER)));
+                query = query.where(qEvent.eventDate.after(LocalDateTime.parse(rangeStart, DateTimeForm.FORMATTER)));
             }
 
             // Дата и время не позже которых должно произойти событие
             if (rangeEnd != null) {
-                query = query.where(qEvent.eventDate.before(LocalDateTime.parse(rangeEnd, Common.FORMATTER)));
+                query = query.where(qEvent.eventDate.before(LocalDateTime.parse(rangeEnd, DateTimeForm.FORMATTER)));
             }
         }
         return query;

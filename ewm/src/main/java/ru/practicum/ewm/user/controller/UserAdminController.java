@@ -9,6 +9,7 @@ import ru.practicum.ewm.user.dto.UserDto;
 import ru.practicum.ewm.user.service.UserAdminService;
 import ru.practicum.ewm.utility.marker.Create;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Slf4j
@@ -31,7 +32,7 @@ public class UserAdminController {
 
     // Admin: Users - Добавление нового пользователя
     @PostMapping
-    public UserDto addNewUser(@RequestBody @Validated(Create.class) NewUserRequest newUserRequest) {
+    public UserDto addNewUser(@Validated(Create.class) @RequestBody NewUserRequest newUserRequest) {
         UserDto newUserDto = userService.addNewUser(newUserRequest);
 
         log.info("Добавление нового пользователя {}", newUserDto);
@@ -40,7 +41,7 @@ public class UserAdminController {
 
     // Admin: Users - Удаление пользователя
     @DeleteMapping("/{userId}")
-    public void deleteUser(@PathVariable Long userId) {
+    public void deleteUser(@NotNull @PathVariable Long userId) {
         log.info("Удаление пользователя с id={}", userId);
         userService.deleteUser(userId);
     }

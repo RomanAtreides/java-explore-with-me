@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.compilation.dto.CompilationDto;
 import ru.practicum.ewm.compilation.service.CompilationPublicService;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Slf4j
@@ -28,7 +29,7 @@ public class CompilationPublicController {
 
     // Получение подборки событий по её идентификатору
     @GetMapping("/{compId}")
-    public CompilationDto findCompilationById(@PathVariable Long compId) {
+    public CompilationDto findCompilationById(@NotNull @PathVariable Long compId) {
         log.info("Получение подборки событий с id={}", compId);
         return compilationPublicService.findCompilationById(compId);
     }

@@ -5,11 +5,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.category.CategoryMapper;
+import ru.practicum.ewm.category.CategoryValidator;
 import ru.practicum.ewm.category.dto.CategoryDto;
 import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.category.repository.CategoryRepository;
-import ru.practicum.ewm.exception.EntityNotFoundException;
-import ru.practicum.ewm.exception.ValidationException;
 import ru.practicum.ewm.utility.FromSizeRequest;
 
 import java.util.List;
@@ -20,6 +19,7 @@ import java.util.List;
 public class CategoryPublicServiceImpl implements CategoryPublicService {
 
     private final CategoryRepository categoryRepository;
+    private final CategoryValidator categoryValidator;
 
     @Override
     public List<CategoryDto> findCategories(Integer from, Integer size) {
@@ -30,8 +30,7 @@ public class CategoryPublicServiceImpl implements CategoryPublicService {
 
     @Override
     public CategoryDto findCategoryById(Long catId) {
-        Category category = categoryRepository.findById(catId)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Категория с id=%d не найдена", catId)));
+        Category category = categoryValidator.getCategoryIfExists(catId);
 
         return CategoryMapper.toCategoryDto(category);
     }
