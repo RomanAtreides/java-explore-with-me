@@ -51,22 +51,23 @@ public class EventAdminServiceImpl implements EventAdminService {
         JPAQuery<Event> query = queryFactory.select(qEvent)
                 .from(qEvent);
 
-        if (users != null) {
-            query = query.where(qEvent.initiator.id.in(users));
+        if (users != null && users.length > 0) {
+            query.where(qEvent.initiator.id.in(users));
         }
 
-        if (states != null) {
-            query = query.where(qEvent.state.in(Arrays.stream(states)
+        if (states != null && states.length > 0) {
+            query.where(qEvent.state.in(Arrays.stream(states)
                     .map(EventState::from)
                     .collect(Collectors.toList())));
         }
 
-        if (categories != null) {
-            query = query.where(qEvent.category.id.in(categories));
+        if (categories != null && categories.length > 0) {
+            query.where(qEvent.category.id.in(categories));
         }
 
-        query = eventPublicServiceImpl.setDatesForQuery(rangeStart, rangeEnd, query, qEvent);
-        query = query.limit(size).offset(from);
+        eventPublicServiceImpl.setDatesForQuery(rangeStart, rangeEnd, query, qEvent);
+        query.offset(from).limit(size);
+
         List<Event> events = query.fetch();
 
         eventPublicServiceImpl.addConfirmedRequestsToEvents(query, events);

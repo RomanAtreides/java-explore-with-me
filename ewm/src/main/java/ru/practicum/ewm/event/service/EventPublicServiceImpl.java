@@ -66,37 +66,37 @@ public class EventPublicServiceImpl implements EventPublicService {
                 .where(qEvent.state.eq(EventState.PUBLISHED));
 
         // Текст для поиска в содержимом аннотации и подробном описании события
-        if (text != null) {
-            query = query.where(qEvent.annotation.containsIgnoreCase(text)
+        if (text != null && !text.isBlank()) {
+            query.where(qEvent.annotation.containsIgnoreCase(text)
                     .or(qEvent.description.containsIgnoreCase(text)));
         }
 
         // Список идентификаторов категорий в которых будет вестись поиск
-        if (categories != null) {
-            //query = query.where(qEvent.category.id.in(categories));
+        if (categories != null && categories.length > 0) {
             query.where(qEvent.category.id.in(categories));
         }
 
         // Поиск только платных/бесплатных событий
         if (paid != null) {
-            query = query.where(qEvent.paid.eq(paid));
+            query.where(qEvent.paid.eq(paid));
         }
 
-        query = setDatesForQuery(rangeStart, rangeEnd, query, qEvent);
+        setDatesForQuery(rangeStart, rangeEnd, query, qEvent);
 
         // Только события у которых не исчерпан лимит запросов на участие
         if (onlyAvailable) {
-            query = query.where(qEvent.confirmedRequests.lt(qEvent.participantLimit));
+            query.where(qEvent.confirmedRequests.lt(qEvent.participantLimit));
         }
 
         // Вариант сортировки: по дате события или по количеству просмотров
         if (valueOf(EventSortOption.EVENT_DATE).equals(sort)) {
-            query = query.orderBy(qEvent.eventDate.asc());
+            query.orderBy(qEvent.eventDate.asc());
         } else if (valueOf(EventSortOption.VIEWS).equals(sort)) {
-            query = query.orderBy(qEvent.views.asc());
+            query.orderBy(qEvent.views.asc());
         }
 
-        query = query.limit(size).offset(from);
+        query.offset(from).limit(size);
+
         List<Event> events = query.fetch();
 
         addConfirmedRequestsToEvents(query, events);
@@ -125,22 +125,21 @@ public class EventPublicServiceImpl implements EventPublicService {
         return EventMapper.eventToEventFullDto(entity);
     }
 
-    public JPAQuery<Event> setDatesForQuery(String rangeStart, String rangeEnd, JPAQuery<Event> query, QEvent qEvent) {
+    public void setDatesForQuery(String rangeStart, String rangeEnd, JPAQuery<Event> query, QEvent qEvent) {
         // Если диапазон дат не указан, то будут возвращены события, которые произойдут позже текущей даты и времени
         if (rangeStart == null && rangeEnd == null) {
-            query = query.where(qEvent.eventDate.after(LocalDateTime.now()));
+            query.where(qEvent.eventDate.after(LocalDateTime.now()));
         } else {
             // Дата и время не раньше которых должно произойти событие
             if (rangeStart != null) {
-                query = query.where(qEvent.eventDate.after(LocalDateTime.parse(rangeStart, DateTimeForm.FORMATTER)));
+                query.where(qEvent.eventDate.after(LocalDateTime.parse(rangeStart, DateTimeForm.FORMATTER)));
             }
 
             // Дата и время не позже которых должно произойти событие
             if (rangeEnd != null) {
-                query = query.where(qEvent.eventDate.before(LocalDateTime.parse(rangeEnd, DateTimeForm.FORMATTER)));
+                query.where(qEvent.eventDate.before(LocalDateTime.parse(rangeEnd, DateTimeForm.FORMATTER)));
             }
         }
-        return query;
     }
 
     public void addConfirmedRequestsToEvents(JPAQuery<Event> query, List<Event> events) {
