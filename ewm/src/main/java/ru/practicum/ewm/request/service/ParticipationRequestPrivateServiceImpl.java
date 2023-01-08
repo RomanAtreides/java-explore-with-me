@@ -8,6 +8,7 @@ import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.event.state.EventState;
 import ru.practicum.ewm.event.state.ParticipationStatus;
 import ru.practicum.ewm.exception.EntityAlreadyExistsException;
+import ru.practicum.ewm.exception.EntityNotFoundException;
 import ru.practicum.ewm.exception.ValidationException;
 import ru.practicum.ewm.request.common.ParticipationRequestMapper;
 import ru.practicum.ewm.request.dto.ParticipationRequestDto;
@@ -111,6 +112,10 @@ public class ParticipationRequestPrivateServiceImpl implements ParticipationRequ
     public ParticipationRequestDto cancelParticipationRequest(Long userId, Long requestId) {
         ParticipationRequest request = participationRequestRepository
                 .findParticipationRequestByIdAndRequesterId(requestId, userId);
+
+        if (request == null) {
+            throw new EntityNotFoundException(String.format("Заявка на участие с id=%d не найдена", requestId));
+        }
 
         if (!request.getStatus().equals(ParticipationStatus.PENDING)) {
             throw new ValidationException(
