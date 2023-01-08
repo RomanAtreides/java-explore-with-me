@@ -4,16 +4,11 @@ import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
+import ru.practicum.ewm.event.client.EventClient;
 import ru.practicum.ewm.event.common.EventMapper;
 import ru.practicum.ewm.event.common.EventValidator;
-import ru.practicum.ewm.event.dto.EndpointHit;
 import ru.practicum.ewm.event.dto.EventFullDto;
 import ru.practicum.ewm.event.dto.EventShortDto;
 import ru.practicum.ewm.event.dto.ViewStats;
@@ -30,10 +25,7 @@ import javax.persistence.EntityManager;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static java.lang.String.valueOf;
@@ -43,14 +35,12 @@ import static java.lang.String.valueOf;
 @Transactional(readOnly = true)
 public class EventPublicServiceImpl implements EventPublicService {
 
-    @Value("${spring.application.name}")
-    private String applicationName;
-    private final WebClient webClient = WebClient.create("http://localhost:9090");
+    private final EventClient client;
     private final EntityManager entityManager;
     private final EventRepository eventRepository;
     private final EventValidator validator;
-    QEvent qEvent = QEvent.event;
-    QParticipationRequest qRequest = QParticipationRequest.participationRequest;
+    private final QEvent qEvent = QEvent.event;
+    private final QParticipationRequest qRequest = QParticipationRequest.participationRequest;
 
     @Override
     @Transactional
@@ -66,7 +56,7 @@ public class EventPublicServiceImpl implements EventPublicService {
             Integer size,
             String clientIp,
             String endpointPath) {
-        buildAndSaveEndpointHit(endpointPath, clientIp);
+        client.buildAndSaveEndpointHit(endpointPath, clientIp);
 
         JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
 
@@ -83,7 +73,8 @@ public class EventPublicServiceImpl implements EventPublicService {
 
         // Список идентификаторов категорий в которых будет вестись поиск
         if (categories != null) {
-            query = query.where(qEvent.category.id.in(categories));
+            //query = query.where(qEvent.category.id.in(categories));
+            query.where(qEvent.category.id.in(categories));
         }
 
         // Поиск только платных/бесплатных событий
@@ -121,9 +112,9 @@ public class EventPublicServiceImpl implements EventPublicService {
         String start = encode(LocalDateTime.now().minusDays(21).toString());
         String end = encode(LocalDateTime.now().toString());
 
-        buildAndSaveEndpointHit(endpointPath, clientIp);
+        client.buildAndSaveEndpointHit(endpointPath, clientIp);
 
-        List<ViewStats> viewStats = findViewStatsFromStats(start, end, endpointPath);
+        List<ViewStats> viewStats = client.findViewStatsFromStats(start, end, endpointPath);
         Event event = validator.getEventIfExists(eventId);
         Long views = viewStats.get(0).getHits();
 
@@ -171,37 +162,6 @@ public class EventPublicServiceImpl implements EventPublicService {
                 }
             }
         }
-    }
-
-    private void buildAndSaveEndpointHit(String endpointPath, String clientIp) {
-        EndpointHit hit = EndpointHit.builder()
-                .id(null)
-                .app(applicationName)
-                .uri(endpointPath)
-                .ip(clientIp)
-                .timestamp(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS))
-                .build();
-
-        webClient.post()
-                .uri("/hit")
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .body(Mono.just(hit), EndpointHit.class)
-                .retrieve()
-                .bodyToMono(Void.class)
-                .block();
-    }
-
-    private List<ViewStats> findViewStatsFromStats(String start, String end, String endpointPath) {
-        return Arrays.asList(Objects.requireNonNull(webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/stats")
-                        .queryParam("start", start)
-                        .queryParam("end", end)
-                        .queryParam("uris", endpointPath)
-                        .build())
-                .retrieve()
-                .bodyToMono(ViewStats[].class)
-                .block()));
     }
 
     private String encode(String value) {
