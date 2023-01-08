@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@NotNull(groups = Create.class)
 public class NewEventDto {
 
     @Size(min = 20, max = 2000, groups = Create.class)

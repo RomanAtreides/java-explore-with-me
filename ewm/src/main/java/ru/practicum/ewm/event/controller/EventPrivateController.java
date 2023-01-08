@@ -13,6 +13,7 @@ import ru.practicum.ewm.event.dto.UpdateEventRequest;
 import ru.practicum.ewm.utility.marker.Create;
 import ru.practicum.ewm.utility.marker.Update;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
 
@@ -27,7 +28,7 @@ public class EventPrivateController {
     // Private: Events - Получение событий, добавленных текущим пользователем
     @GetMapping
     public List<EventShortDto> findUserEvents(
-            @PathVariable Long userId,
+            @NotNull @PathVariable Long userId,
             @RequestParam(required = false, defaultValue = "0") Integer from,
             @RequestParam(required = false, defaultValue = "10") Integer size) {
         log.info("Получение событий from={}, size={}, добавленных пользователем с id={}", from, size, userId);
@@ -37,7 +38,7 @@ public class EventPrivateController {
     // Private: Events - Изменение события добавленного текущим пользователем
     @PatchMapping
     public EventFullDto changeEvent(
-            @PathVariable Long userId,
+            @NotNull @PathVariable Long userId,
             @Validated(Update.class) @RequestBody UpdateEventRequest updateEventRequest) {
         log.info(
                 "Изменение события с id={} добавленного пользователем с id={}",
@@ -50,7 +51,7 @@ public class EventPrivateController {
     // Private: Events - Добавление нового события
     @PostMapping
     public EventFullDto addNewEvent(
-            @PathVariable Long userId,
+            @NotNull @PathVariable Long userId,
             @Validated(Create.class) @RequestBody NewEventDto newEventDto) {
         EventFullDto eventFullDto = eventPrivateService.addNewEvent(userId, newEventDto);
 
@@ -61,8 +62,8 @@ public class EventPrivateController {
     // Private: Events - Получение полной информации о событии добавленном текущим пользователем
     @GetMapping("/{eventId}")
     public EventFullDto findUserEventFullInfo(
-            @PathVariable Long userId,
-            @PathVariable Long eventId) {
+            @NotNull @PathVariable Long userId,
+            @NotNull @PathVariable Long eventId) {
         log.info("Получение полной информации о событии с id={} добавленном пользователем с id={}", eventId, userId);
         return eventPrivateService.findUserEventFullInfo(userId, eventId);
     }
@@ -70,8 +71,8 @@ public class EventPrivateController {
     // Private: Events - Отмена события добавленного текущим пользователем
     @PatchMapping("/{eventId}")
     public EventFullDto cancelUserEvent(
-            @PathVariable Long userId,
-            @PathVariable Long eventId) {
+            @NotNull @PathVariable Long userId,
+            @NotNull @PathVariable Long eventId) {
         log.info("Отмена события с id={} добавленного пользователем с id={}", eventId, userId);
         return eventPrivateService.cancelUserEvent(userId, eventId);
     }
@@ -79,8 +80,8 @@ public class EventPrivateController {
     // Private: Events - Получение информации о запросах на участие в событии текущего пользователя
     @GetMapping("/{eventId}/requests")
     public List<ParticipationRequestDto> findUserParticipationRequests(
-            @PathVariable Long userId,
-            @PathVariable Long eventId) {
+            @NotNull @PathVariable Long userId,
+            @NotNull @PathVariable Long eventId) {
         log.info(
                 "Получение информации о запросах на участие в событии с id={} пользователем с id={}",
                 eventId,
@@ -92,9 +93,9 @@ public class EventPrivateController {
     // Private: Events - Подтверждение чужой заявки на участие в событии текущего пользователя
     @PatchMapping("/{eventId}/requests/{reqId}/confirm")
     public ParticipationRequestDto confirmParticipationRequest(
-            @PathVariable Long userId,
-            @PathVariable Long eventId,
-            @PathVariable Long reqId) {
+            @NotNull @PathVariable Long userId,
+            @NotNull @PathVariable Long eventId,
+            @NotNull @PathVariable Long reqId) {
         log.info(
                 "Подтверждение чужой заявки с id={} на участие в событии с id={} пользователя с id={}",
                 reqId,
@@ -111,9 +112,9 @@ public class EventPrivateController {
     // Private: Events - Отклонение чужой заявки на участие в событии текущего пользователя
     @PatchMapping("/{eventId}/requests/{reqId}/reject")
     public ParticipationRequestDto rejectParticipationRequest(
-            @PathVariable Long userId,
-            @PathVariable Long eventId,
-            @PathVariable Long reqId) {
+            @NotNull @PathVariable Long userId,
+            @NotNull @PathVariable Long eventId,
+            @NotNull @PathVariable Long reqId) {
         log.info(
                 "Отклонение чужой заявки с id={} на участие в событии с id={} пользователя с id={}",
                 userId,
