@@ -1,4 +1,4 @@
-package ru.practicum.ewm.compilation;
+package ru.practicum.ewm.compilation.common;
 
 import org.springframework.stereotype.Component;
 import ru.practicum.ewm.compilation.dto.CompilationDto;

@@ -9,11 +9,11 @@ import ru.practicum.ewm.event.state.EventState;
 import ru.practicum.ewm.event.state.ParticipationStatus;
 import ru.practicum.ewm.exception.EntityAlreadyExistsException;
 import ru.practicum.ewm.exception.ValidationException;
-import ru.practicum.ewm.request.ParticipationRequestMapper;
+import ru.practicum.ewm.request.common.ParticipationRequestMapper;
 import ru.practicum.ewm.request.dto.ParticipationRequestDto;
 import ru.practicum.ewm.request.model.ParticipationRequest;
 import ru.practicum.ewm.request.repository.ParticipationRequestRepository;
-import ru.practicum.ewm.user.UserMapper;
+import ru.practicum.ewm.user.common.UserMapper;
 import ru.practicum.ewm.user.model.User;
 import ru.practicum.ewm.user.service.UserAdminService;
 

@@ -1,4 +1,4 @@
-package ru.practicum.ewm.category;
+package ru.practicum.ewm.category.common;
 
 import org.springframework.stereotype.Component;
 import ru.practicum.ewm.category.dto.CategoryDto;

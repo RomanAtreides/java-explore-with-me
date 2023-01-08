@@ -1,4 +1,4 @@
-package ru.practicum.ewm.user;
+package ru.practicum.ewm.user.common;
 
 import org.springframework.stereotype.Component;
 import ru.practicum.ewm.user.dto.NewUserRequest;

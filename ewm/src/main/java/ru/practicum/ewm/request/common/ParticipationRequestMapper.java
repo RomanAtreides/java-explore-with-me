@@ -1,4 +1,4 @@
-package ru.practicum.ewm.request;
+package ru.practicum.ewm.request.common;
 
 import org.springframework.stereotype.Component;
 import ru.practicum.ewm.request.dto.ParticipationRequestDto;

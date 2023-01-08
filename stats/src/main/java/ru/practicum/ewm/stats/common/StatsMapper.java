@@ -1,4 +1,4 @@
-package ru.practicum.ewm.stats;
+package ru.practicum.ewm.stats.common;
 
 import org.springframework.stereotype.Component;
 import ru.practicum.ewm.stats.dto.EndpointHit;

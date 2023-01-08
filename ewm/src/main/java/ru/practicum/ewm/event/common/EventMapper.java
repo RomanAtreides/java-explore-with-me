@@ -1,14 +1,14 @@
 package ru.practicum.ewm.event.common;
 
 import org.springframework.stereotype.Component;
-import ru.practicum.ewm.category.CategoryMapper;
+import ru.practicum.ewm.category.common.CategoryMapper;
 import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.event.dto.EventFullDto;
 import ru.practicum.ewm.event.dto.EventShortDto;
 import ru.practicum.ewm.event.dto.NewEventDto;
 import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.event.state.EventState;
-import ru.practicum.ewm.user.UserMapper;
+import ru.practicum.ewm.user.common.UserMapper;
 import ru.practicum.ewm.user.model.User;
 
 import java.time.LocalDateTime;

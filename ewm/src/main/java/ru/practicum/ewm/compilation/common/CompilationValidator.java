@@ -1,4 +1,4 @@
-package ru.practicum.ewm.compilation;
+package ru.practicum.ewm.compilation.common;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
