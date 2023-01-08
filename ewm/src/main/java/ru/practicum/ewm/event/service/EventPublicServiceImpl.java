@@ -67,8 +67,6 @@ public class EventPublicServiceImpl implements EventPublicService {
             String clientIp,
             String endpointPath) {
         buildAndSaveEndpointHit(endpointPath, clientIp);
-        // TODO: 06.01.2023 информация о каждом событии должна включать в себя количество просмотров
-        //  и количество уже одобренных заявок на участие
 
         JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
 
@@ -209,74 +207,4 @@ public class EventPublicServiceImpl implements EventPublicService {
     private String encode(String value) {
         return URLEncoder.encode(value, StandardCharsets.UTF_8);
     }
-
-    /*
-     *  С.Савельев - вебинар по архитектуре - 1 часть:
-     *  confirmedRequests - количество одобренных заявок на участие в данном событии
-     *  1. Не нужно для каждого события делать отдельный запрос в БД
-     *  2. Нужно сделать один запрос сразу для всех событий с помощью оператора IN и уже из ответа сгруппировать по
-     *  событиям эти заявки
-     *
-     *  Также не стоит забывать про QueryDSL для динамических запросов (когда мы на этапе
-     *  написания кода не знаем, по каким полям будет фильтрация)
-     */
-
-    /*private List<EventShortDto> getShortEventsFromTuple(List<Tuple> tuples) {
-        return tuples.stream()
-                .map(tuple -> new EventShortDto(
-                        tuple.get(0, String.class),
-                        tuple.get(1, CategoryDto.class),
-                        tuple.get(2, Long.class),
-                        tuple.get(3, LocalDateTime.class),
-                        tuple.get(4, Long.class),
-                        tuple.get(5, UserShortDto.class),
-                        Boolean.TRUE.equals(tuple.get(6, Boolean.class)),
-                        tuple.get(7, String.class),
-                        tuple.get(8, Long.class)
-                ))
-                .collect(Collectors.toList());
-    }*/
-
-    /*private String test(EndpointHit hit) {
-        return webClient
-                .get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/test")
-                        .queryParam("text", "text from ewm app")
-                        .build())
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
-    }*/
-
-    /*private String test2(EndpointHit hit) {
-        return webClient
-                .post()
-                .uri("/test")
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .body(Mono.just(hit), EndpointHit.class)
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
-    }*/
-
-    /*JPAQuery<Tuple> finalQuery = query.select(
-                    qEvent.annotation,
-                    qEvent.category.id,
-                    qEvent.category.name,
-                    qRequest.status.count(),
-                    qEvent.eventDate,
-                    qEvent.id,
-                    qEvent.initiator.id,
-                    qEvent.initiator.name,
-                    qEvent.paid,
-                    qEvent.title,
-                    qEvent.views)
-            .from(qRequest)
-            .rightJoin(qRequest.event, qEvent)
-            .where(qRequest.status.eq(ParticipationStatus.CONFIRMED)
-                    .and(qRequest.event.id.in(ids)))
-            .groupBy(qEvent.id, qEvent.category.name, qEvent.initiator.name);
-
-    List<Tuple> tp = finalQuery.fetch();*/
 }
