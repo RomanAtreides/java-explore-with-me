@@ -20,7 +20,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class EventClient {
 
-    private final WebClient webClient = WebClient.create("http://localhost:9090");
+    private final WebClient webClient = WebClient.create("http://stats-server:9090");
 
     @Value("${spring.application.name}")
     private String applicationName;
