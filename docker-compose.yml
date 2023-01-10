@@ -5,14 +5,14 @@ services:
     image: "stats_image:0.0.1"
     container_name: "stats_container"
     ports:
-      - "9090:9090"
+      - "9092:9090"
     depends_on:
       - stats-db
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/stats
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/stats-db
 
   stats-db:
-    image: postgres:14-alpine
+    image: postgres:14.4-alpine
     container_name: "stats_db_container"
     ports:
       - "6431:5432"
@@ -31,11 +31,11 @@ services:
       - stats-server
       - ewm-db
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5431/ewm
-      - STATS_URL=http://stats:9090
+      - STATS_SERVER_URL=http://stats-server:9090
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/ewm-db
 
   ewm-db:
-    image: postgres:14-alpine
+    image: postgres:14.4-alpine
     container_name: "ewm_db_container"
     ports:
       - "6432:5432"
