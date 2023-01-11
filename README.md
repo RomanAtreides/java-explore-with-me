@@ -12,3 +12,5 @@
 - Slf4j
 
 Для баз данных используется PostgreSQL 14.4
+
+Ссылка на пул-реквест: https://github.com/RomanAtreides/java-explore-with-me/pull/1
