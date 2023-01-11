@@ -20,7 +20,10 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class EventClient {
 
-    private final WebClient webClient = WebClient.create("http://stats-server:9090");
+    private final WebClient webClient = WebClient.builder()
+            .baseUrl("http://stats-server:9090")
+            .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+            .build();
 
     @Value("${spring.application.name}")
     private String applicationName;
@@ -36,7 +39,6 @@ public class EventClient {
 
         webClient.post()
                 .uri("/hit")
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .body(Mono.just(hit), EndpointHit.class)
                 .retrieve()
                 .bodyToMono(Void.class)
