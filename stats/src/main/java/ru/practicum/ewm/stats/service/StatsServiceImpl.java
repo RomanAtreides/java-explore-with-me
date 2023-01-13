@@ -49,11 +49,11 @@ public class StatsServiceImpl implements StatsService {
                 .where(qStats.timestamp.between(intervalBounds[0], intervalBounds[1]));
 
         if (uris != null) {
-            query = query.where(qStats.uri.in(uris));
+            query.where(qStats.uri.in(uris));
         }
 
         if (unique) {
-            query = query.distinct();
+            query.distinct();
         }
 
         List<Tuple> tuples = query.select(qStats.app, qStats.uri, qStats.uri.count())
@@ -75,10 +75,11 @@ public class StatsServiceImpl implements StatsService {
     }
 
     private LocalDateTime[] getDatesForInterval(String encodedStart, String encodedEnd) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String decodedStart = URLDecoder.decode(encodedStart, StandardCharsets.UTF_8);
         String decodedEnd = URLDecoder.decode(encodedEnd, StandardCharsets.UTF_8);
-        LocalDateTime start = LocalDateTime.parse(decodedStart, DateTimeFormatter.ISO_DATE_TIME);
-        LocalDateTime end = LocalDateTime.parse(decodedEnd, DateTimeFormatter.ISO_DATE_TIME);
+        LocalDateTime start = LocalDateTime.parse(decodedStart, formatter);
+        LocalDateTime end = LocalDateTime.parse(decodedEnd, formatter);
 
         return new LocalDateTime[]{start, end};
     }

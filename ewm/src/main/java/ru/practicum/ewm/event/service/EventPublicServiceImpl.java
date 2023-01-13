@@ -109,8 +109,8 @@ public class EventPublicServiceImpl implements EventPublicService {
     @Override
     @Transactional
     public EventFullDto findFullEventInfo(Long eventId, String clientIp, String endpointPath) {
-        String start = encode(LocalDateTime.now().minusDays(21).toString());
-        String end = encode(LocalDateTime.now().toString());
+        String start = encode(LocalDateTime.now().minusDays(21L).format(DateTimeForm.FORMATTER));
+        String end = encode(LocalDateTime.now().format(DateTimeForm.FORMATTER));
 
         client.buildAndSaveEndpointHit(endpointPath, clientIp);
 
