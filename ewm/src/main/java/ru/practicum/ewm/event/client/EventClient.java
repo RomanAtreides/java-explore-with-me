@@ -20,13 +20,13 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class EventClient {
 
+    @Value("${spring.application.name}")
+    private String applicationName;
+
     private final WebClient webClient = WebClient.builder()
             .baseUrl("http://stats-server:9090")
             .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             .build();
-
-    @Value("${spring.application.name}")
-    private String applicationName;
 
     public void buildAndSaveEndpointHit(String endpointPath, String clientIp) {
         EndpointHit hit = EndpointHit.builder()
@@ -46,15 +46,17 @@ public class EventClient {
     }
 
     public List<ViewStats> findViewStatsFromStats(String start, String end, String endpointPath) {
-        return Arrays.asList(Objects.requireNonNull(webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/stats")
-                        .queryParam("start", start)
-                        .queryParam("end", end)
-                        .queryParam("uris", endpointPath)
-                        .build())
-                .retrieve()
-                .bodyToMono(ViewStats[].class)
-                .block()));
+        return Arrays.asList(Objects.requireNonNull(
+                webClient.get()
+                        .uri(uriBuilder -> uriBuilder
+                                .path("/stats")
+                                .queryParam("start", start)
+                                .queryParam("end", end)
+                                .queryParam("uris", endpointPath)
+                                .build())
+                        .retrieve()
+                        .bodyToMono(ViewStats[].class)
+                        .block()
+        ));
     }
 }
