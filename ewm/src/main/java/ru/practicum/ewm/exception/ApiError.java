@@ -1,25 +1,24 @@
 package ru.practicum.ewm.exception;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import java.util.List;
 
 @Getter
 @Setter
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @Builder
 public class ApiError {
 
-    private List<StackTraceElement> errors;
+    List<StackTraceElement> errors;
 
-    private String message;
+    String message;
 
-    private String reason;
+    String reason;
 
-    private String status;
+    String status;
 
-    private String timestamp;
+    String timestamp;
 }

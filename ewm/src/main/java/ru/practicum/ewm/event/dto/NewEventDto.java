@@ -1,10 +1,8 @@
 package ru.practicum.ewm.event.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Value;
 import ru.practicum.ewm.event.model.Location;
 import ru.practicum.ewm.utility.marker.Create;
@@ -15,6 +13,7 @@ import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Data
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -23,30 +22,30 @@ public class NewEventDto {
 
     @Size(min = 20, max = 2000, groups = Create.class)
     @NotNull(groups = Create.class)
-    private String annotation;
+    String annotation;
 
-    private Long category;
+    Long category;
 
     @Size(min = 20, max = 7000, groups = Create.class)
-    private String description;
+    String description;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @Future(groups = Create.class)
-    private LocalDateTime eventDate;
+    LocalDateTime eventDate;
 
-    private Location location;
+    Location location;
 
     @Value("false")
-    private boolean paid;
+    boolean paid;
 
     @Value("0")
-    private Integer participantLimit;
+    Integer participantLimit;
 
     @Value("true")
-    private boolean requestModeration;
+    boolean requestModeration;
 
     @Size(min = 3, max = 120, groups = Create.class)
-    private String title;
+    String title;
 
     @Override
     public String toString() {

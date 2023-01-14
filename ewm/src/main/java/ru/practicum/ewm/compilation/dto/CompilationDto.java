@@ -1,22 +1,25 @@
 package ru.practicum.ewm.compilation.dto;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import ru.practicum.ewm.event.dto.EventShortDto;
 
 import java.util.Set;
 
 @Data
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @NoArgsConstructor
 @AllArgsConstructor
 public class CompilationDto {
 
-    private Long id;
+    Long id;
 
-    private Set<EventShortDto> events;
+    Set<EventShortDto> events;
 
-    private Boolean pinned;
+    Boolean pinned;
 
-    private String title;
+    String title;
 }

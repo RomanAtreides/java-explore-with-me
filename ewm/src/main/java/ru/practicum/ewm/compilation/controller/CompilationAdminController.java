@@ -18,6 +18,8 @@ import javax.validation.constraints.NotNull;
 public class CompilationAdminController {
 
     private final CompilationAdminService compilationAdminService;
+    private final String changeCompilationUrlPart = "/{compId}/events/{eventId}";
+    private final String pinCompilationUrlPart = "/{compId}/pin";
 
     // Добавление новой подборки
     @PostMapping
@@ -35,7 +37,7 @@ public class CompilationAdminController {
     }
 
     // Удалить событие из подборки
-    @DeleteMapping("/{compId}/events/{eventId}")
+    @DeleteMapping(changeCompilationUrlPart)
     public void deleteEventFromCompilation(
             @NotNull @PathVariable Long compId,
             @NotNull @PathVariable Long eventId) {
@@ -44,7 +46,7 @@ public class CompilationAdminController {
     }
 
     // Добавить событие в подборку
-    @PatchMapping("/{compId}/events/{eventId}")
+    @PatchMapping(changeCompilationUrlPart)
     public void addEventToCompilation(
             @NotNull @PathVariable Long compId,
             @NotNull @PathVariable Long eventId) {
@@ -53,14 +55,14 @@ public class CompilationAdminController {
     }
 
     // Открепить подборку от главной страницы
-    @DeleteMapping("/{compId}/pin")
+    @DeleteMapping(pinCompilationUrlPart)
     public void unpinCompilation(@NotNull @PathVariable Long compId) {
         log.info("Открепление подборки с id={} от главной страницы", compId);
         compilationAdminService.pinOrUnpinCompilation(compId, false);
     }
 
     // Закрепить подборку на главной странице
-    @PatchMapping("/{compId}/pin")
+    @PatchMapping(pinCompilationUrlPart)
     public void pinCompilation(@NotNull @PathVariable Long compId) {
         log.info("Закрепление подборки с id={} на главной странице", compId);
         compilationAdminService.pinOrUnpinCompilation(compId, true);

@@ -24,6 +24,7 @@ import java.util.Map;
 public class EventPrivateController {
 
     private final EventPrivateService eventPrivateService;
+    private final String eventIdUrlPart = "/{eventId}";
 
     // Private: Events - Получение событий, добавленных текущим пользователем
     @GetMapping
@@ -60,7 +61,7 @@ public class EventPrivateController {
     }
 
     // Private: Events - Получение полной информации о событии добавленном текущим пользователем
-    @GetMapping("/{eventId}")
+    @GetMapping(eventIdUrlPart)
     public EventFullDto findUserEventFullInfo(
             @NotNull @PathVariable Long userId,
             @NotNull @PathVariable Long eventId) {
@@ -69,7 +70,7 @@ public class EventPrivateController {
     }
 
     // Private: Events - Отмена события добавленного текущим пользователем
-    @PatchMapping("/{eventId}")
+    @PatchMapping(eventIdUrlPart)
     public EventFullDto cancelUserEvent(
             @NotNull @PathVariable Long userId,
             @NotNull @PathVariable Long eventId) {

@@ -1,13 +1,16 @@
 package ru.practicum.ewm.stats.model;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Data
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -17,17 +20,17 @@ public class Stats {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Long id;
+    Long id;
 
     @Column(name = "app")
-    private String app;
+    String app;
 
     @Column(name = "uri")
-    private String uri;
+    String uri;
 
     @Column(name = "ip")
-    private String ip;
+    String ip;
 
     @Column(name = "view_date")
-    private LocalDateTime timestamp;
+    LocalDateTime timestamp;
 }

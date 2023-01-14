@@ -1,9 +1,11 @@
 package ru.practicum.ewm.event.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Value;
 import ru.practicum.ewm.utility.marker.Update;
 
@@ -13,33 +15,34 @@ import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Data
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @NoArgsConstructor
 @AllArgsConstructor
 @NotNull(groups = Update.class)
 public class UpdateEventRequest {
 
     @Size(min = 20, max = 2000, groups = Update.class)
-    private String annotation;
+    String annotation;
 
-    private Long category;
+    Long category;
 
     @Size(min = 20, max = 7000, groups = Update.class)
-    private String description;
+    String description;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @Future(groups = Update.class)
-    private LocalDateTime eventDate;
+    LocalDateTime eventDate;
 
-    private Long eventId;
+    Long eventId;
 
     @Value("false")
-    private boolean paid;
+    boolean paid;
 
     @Value("0")
-    private Integer participantLimit;
+    Integer participantLimit;
 
     @Size(min = 3, max = 120, groups = Update.class)
-    private String title;
+    String title;
 
     @Override
     public String toString() {
