@@ -3,7 +3,10 @@ package ru.practicum.ewm.user.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.ewm.user.dto.UserDto;
 import ru.practicum.ewm.user.service.UserPrivateService;
+
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -11,21 +14,18 @@ import ru.practicum.ewm.user.service.UserPrivateService;
 @RequestMapping("/private/users")
 public class UserPrivateController {
 
-    private final String addOrRemoveFriendUrlPart = "{id}/friendship/{friendId}";
     private final UserPrivateService userPrivateService;
 
     // Private: Users - Просмотр списка своих друзей
-    /*@GetMapping
+    @GetMapping("{id}/friendship")
     public List<UserDto> findFriends(
-            @RequestParam(required = false) Long[] ids,
-            @RequestParam(required = false, defaultValue = "0") Integer from,
-            @RequestParam(required = false, defaultValue = "10") Integer size) {
-        log.info("Получение списка пользователей from={}, size={} или с ids={}", from, size, ids);
-        return userService.findUsers(ids, from, size);
-    }*/
+            @PathVariable Long id) {
+        log.info("Получение списка друзей пользователя с id={}", id);
+        return userPrivateService.findFriends(id);
+    }
 
     // Private: Users - Создание заявки на добавление пользователя в свой список друзей
-    @PostMapping(addOrRemoveFriendUrlPart)
+    @PostMapping("{id}/friendship/{friendId}/add")
     public void addNewFriend(
             @PathVariable Long id,
             @PathVariable Long friendId) {
@@ -33,16 +33,21 @@ public class UserPrivateController {
         userPrivateService.addNewFriend(id, friendId);
     }
 
-    // Private: Users - Отмена своей заявки на добавление пользователя в свой список друзей
-
     // Private: Users - Подтверждение заявки на добавление пользователя в свой список друзей
+    @PatchMapping("{id}/friendship/{friendId}/confirm")
+    public void confirmFriendship(
+            @PathVariable Long id,
+            @PathVariable Long friendId) {
+        log.info("Подтверждение пользователем с id={} заявки на дружбу с пользователем с id={}", id, friendId);
+        userPrivateService.confirmFriendship(id, friendId);
+    }
 
     // Private: Users - Удаление пользователя из своего списка друзей
-    @DeleteMapping(addOrRemoveFriendUrlPart)
+    @PatchMapping("{id}/friendship/{friendId}/cancel")
     public void removeFriend(
             @PathVariable Long id,
             @PathVariable Long friendId) {
         log.info("Удаление пользователем с id={} пользователя с id={} из своего списка друзей", id, friendId);
-        userPrivateService.removeFriend(id, friendId);
+        userPrivateService.cancelFriendship(id, friendId);
     }
 }
