@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.user.dto.UserDto;
 import ru.practicum.ewm.user.service.UserPrivateService;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Slf4j
@@ -19,7 +20,7 @@ public class UserPrivateController {
     // Private: Users - Просмотр списка своих друзей
     @GetMapping("{id}/friendship")
     public List<UserDto> findFriends(
-            @PathVariable Long id) {
+            @NotNull @PathVariable Long id) {
         log.info("Получение списка друзей пользователя с id={}", id);
         return userPrivateService.findFriends(id);
     }
@@ -27,8 +28,8 @@ public class UserPrivateController {
     // Private: Users - Создание заявки на добавление пользователя в свой список друзей
     @PostMapping("{id}/friendship/{friendId}/add")
     public void addNewFriend(
-            @PathVariable Long id,
-            @PathVariable Long friendId) {
+            @NotNull @PathVariable Long id,
+            @NotNull @PathVariable Long friendId) {
         log.info("Добавление пользователем с id={} пользователя с id={} в свой список друзей", id, friendId);
         userPrivateService.addNewFriend(id, friendId);
     }
@@ -36,8 +37,8 @@ public class UserPrivateController {
     // Private: Users - Подтверждение заявки на добавление пользователя в свой список друзей
     @PatchMapping("{id}/friendship/{friendId}/confirm")
     public void confirmFriendship(
-            @PathVariable Long id,
-            @PathVariable Long friendId) {
+            @NotNull @PathVariable Long id,
+            @NotNull @PathVariable Long friendId) {
         log.info("Подтверждение пользователем с id={} заявки на дружбу с пользователем с id={}", id, friendId);
         userPrivateService.confirmFriendship(id, friendId);
     }
@@ -45,8 +46,8 @@ public class UserPrivateController {
     // Private: Users - Удаление пользователя из своего списка друзей
     @PatchMapping("{id}/friendship/{friendId}/cancel")
     public void removeFriend(
-            @PathVariable Long id,
-            @PathVariable Long friendId) {
+            @NotNull @PathVariable Long id,
+            @NotNull @PathVariable Long friendId) {
         log.info("Удаление пользователем с id={} пользователя с id={} из своего списка друзей", id, friendId);
         userPrivateService.cancelFriendship(id, friendId);
     }

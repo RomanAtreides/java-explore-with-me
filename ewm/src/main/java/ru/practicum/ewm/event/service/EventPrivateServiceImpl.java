@@ -1,5 +1,7 @@
 package ru.practicum.ewm.event.service;
 
+import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -9,18 +11,19 @@ import ru.practicum.ewm.category.dto.CategoryDto;
 import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.category.service.CategoryPublicService;
 import ru.practicum.ewm.event.common.EventMapper;
-import ru.practicum.ewm.event.state.EventState;
-import ru.practicum.ewm.event.state.ParticipationStatus;
 import ru.practicum.ewm.event.dto.EventFullDto;
 import ru.practicum.ewm.event.dto.EventShortDto;
 import ru.practicum.ewm.event.dto.NewEventDto;
+import ru.practicum.ewm.event.dto.UpdateEventRequest;
 import ru.practicum.ewm.event.model.Event;
+import ru.practicum.ewm.event.model.QEvent;
 import ru.practicum.ewm.event.repository.EventRepository;
+import ru.practicum.ewm.event.state.EventState;
+import ru.practicum.ewm.event.state.ParticipationStatus;
 import ru.practicum.ewm.exception.AccessException;
 import ru.practicum.ewm.exception.EntityNotFoundException;
 import ru.practicum.ewm.exception.ValidationException;
 import ru.practicum.ewm.request.common.ParticipationRequestMapper;
-import ru.practicum.ewm.event.dto.UpdateEventRequest;
 import ru.practicum.ewm.request.dto.ParticipationRequestDto;
 import ru.practicum.ewm.request.model.ParticipationRequest;
 import ru.practicum.ewm.request.repository.ParticipationRequestRepository;
@@ -30,6 +33,7 @@ import ru.practicum.ewm.user.model.User;
 import ru.practicum.ewm.user.service.UserAdminService;
 import ru.practicum.ewm.utility.FromSizeRequest;
 
+import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -40,10 +44,12 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class EventPrivateServiceImpl implements EventPrivateService {
 
+    private final EntityManager entityManager;
     private final EventRepository eventRepository;
     private final UserAdminService userAdminService;
     private final CategoryPublicService categoryPublicService;
     private final ParticipationRequestRepository participationRequestRepository;
+    private final QEvent qEvent = QEvent.event;
 
     @Override
     public List<EventShortDto> findUserEvents(Long userId, Integer from, Integer size) {
@@ -223,6 +229,38 @@ public class EventPrivateServiceImpl implements EventPrivateService {
         ParticipationRequest canceledRequest = participationRequestRepository.save(request);
 
         return ParticipationRequestMapper.toParticipationRequestDto(canceledRequest);
+    }
+
+    // TODO: 15.01.2023 реализовать метод
+    // Список событий, в которых участвует пользователь
+    // Список событий, которые организовал пользователь
+
+    /*
+     * Подписка на друзей и возможность получать список актуальных событий, в которых они принимают участие
+     */
+    @Override
+    public List<EventShortDto> findFriendsEvents(Long userId, Boolean descendingSort, Integer from, Integer size) {
+        JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
+
+        // Должны быть возвращены только опубликованные события
+        JPAQuery<Event> query = queryFactory.select(qEvent)
+                .from(qEvent)
+                .where(qEvent.state.eq(EventState.PUBLISHED));
+
+        // Вариант сортировки: по дате события по возрастающей или по убывающей
+        if (descendingSort != null && descendingSort.equals(true)) {
+            query.orderBy(qEvent.eventDate.desc());
+        } else {
+            query.orderBy(qEvent.eventDate.asc());
+        }
+
+        query.offset(from).limit(size);
+
+        List<Event> events = query.fetch();
+
+        return events.stream()
+                .map(EventMapper::eventToEventShortDto)
+                .collect(Collectors.toList());
     }
 
     private Event getEventIfExists(Long eventId) {

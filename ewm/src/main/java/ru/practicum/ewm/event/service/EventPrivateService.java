@@ -26,4 +26,6 @@ public interface EventPrivateService {
     Map<Long, ParticipationRequestDto> confirmParticipationRequest(Long userId, Long eventId, Long reqId);
 
     ParticipationRequestDto rejectParticipationRequest(Long userId, Long eventId, Long reqId);
+
+    List<EventShortDto> findFriendsEvents(Long userId, Boolean descendingSort, Integer from, Integer size);
 }

@@ -37,8 +37,15 @@ public class UserPrivateServiceImpl implements UserPrivateService {
             throw new EntityNotFoundException("Пользователь не найден");
         }
 
+        if (id > friendId) {
+            users = users.stream()
+                    .sorted((u1, u2) -> u2.getId().compareTo(u1.getId()))
+                    .collect(Collectors.toList());
+        }
+
         User user = users.get(0);
         User friend = users.get(1);
+
         Friendship friendship = friendshipRepository.findByRequesterIdAndFriendId(id, friendId);
 
         if (friendship != null) {
@@ -98,6 +105,7 @@ public class UserPrivateServiceImpl implements UserPrivateService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<UserDto> findFriends(Long id) {
         Long[] friendIds = friendshipRepository.findFriends(id, FriendshipStatus.CONFIRMED);
         List<User> users = userRepository.findUsers(friendIds);

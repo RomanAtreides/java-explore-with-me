@@ -7,8 +7,6 @@ import ru.practicum.ewm.user.state.FriendshipStatus;
 
 public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
 
-    //Friendship findByRequesterIdAndFriendId(Long id, Long friendId);
-
     @Query("select f from Friendship f where f.requester.id in (?1, ?2) and f.friend.id in (?1, ?2)")
     Friendship findByRequesterIdAndFriendId(Long id, Long friendId);
 
