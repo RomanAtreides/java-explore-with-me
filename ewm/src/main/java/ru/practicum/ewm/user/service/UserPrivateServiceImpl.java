@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class UserPrivateServiceImpl implements UserPrivateService {
 
     private final FriendshipRepository friendshipRepository;
@@ -23,6 +23,10 @@ public class UserPrivateServiceImpl implements UserPrivateService {
 
     @Override
     public void addNewFriend(Long id, Long friendId) {
+        if (id.equals(friendId)) {
+            throw new ValidationException("Нельзя создать заявку на дружбу с самим собой");
+        }
+
         User user = userValidator.getUserIfExists(id);
         User friend = userValidator.getUserIfExists(friendId);
 

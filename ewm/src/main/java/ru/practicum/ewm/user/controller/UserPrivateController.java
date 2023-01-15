@@ -29,7 +29,7 @@ public class UserPrivateController {
     public void addNewFriend(
             @PathVariable Long id,
             @PathVariable Long friendId) {
-        log.info("Добавление пользователя с id={} в свой список друзей", friendId);
+        log.info("Добавление пользователем с id={} пользователя с id={} в свой список друзей", id, friendId);
         userPrivateService.addNewFriend(id, friendId);
     }
 
@@ -42,7 +42,7 @@ public class UserPrivateController {
     public void removeFriend(
             @PathVariable Long id,
             @PathVariable Long friendId) {
-        log.info("Удаление пользователя с id={} из своего списка друзей", friendId);
+        log.info("Удаление пользователем с id={} пользователя с id={} из своего списка друзей", id, friendId);
         userPrivateService.removeFriend(id, friendId);
     }
 }
