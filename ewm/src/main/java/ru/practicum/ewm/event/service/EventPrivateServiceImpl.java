@@ -1,7 +1,5 @@
 package ru.practicum.ewm.event.service;
 
-import com.querydsl.jpa.impl.JPAQuery;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -16,7 +14,6 @@ import ru.practicum.ewm.event.dto.EventShortDto;
 import ru.practicum.ewm.event.dto.NewEventDto;
 import ru.practicum.ewm.event.dto.UpdateEventRequest;
 import ru.practicum.ewm.event.model.Event;
-import ru.practicum.ewm.event.model.QEvent;
 import ru.practicum.ewm.event.repository.EventRepository;
 import ru.practicum.ewm.event.state.EventState;
 import ru.practicum.ewm.event.state.ParticipationStatus;
@@ -31,9 +28,11 @@ import ru.practicum.ewm.user.common.UserMapper;
 import ru.practicum.ewm.user.dto.UserDto;
 import ru.practicum.ewm.user.model.User;
 import ru.practicum.ewm.user.service.UserAdminService;
+import ru.practicum.ewm.user.state.FriendshipStatus;
 import ru.practicum.ewm.utility.FromSizeRequest;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +48,6 @@ public class EventPrivateServiceImpl implements EventPrivateService {
     private final UserAdminService userAdminService;
     private final CategoryPublicService categoryPublicService;
     private final ParticipationRequestRepository participationRequestRepository;
-    private final QEvent qEvent = QEvent.event;
 
     @Override
     public List<EventShortDto> findUserEvents(Long userId, Integer from, Integer size) {
@@ -232,34 +230,46 @@ public class EventPrivateServiceImpl implements EventPrivateService {
     }
 
     // TODO: 15.01.2023 реализовать метод
-    // Список событий, в которых участвует пользователь
-    // Список событий, которые организовал пользователь
-
     /*
      * Подписка на друзей и возможность получать список актуальных событий, в которых они принимают участие
+     * Список событий, которые организовал пользователь
      */
     @Override
     public List<EventShortDto> findFriendsEvents(Long userId, Boolean descendingSort, Integer from, Integer size) {
-        JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
+        String sort = descendingSort ? "DESC" : "ASC";
 
-        // Должны быть возвращены только опубликованные события
-        JPAQuery<Event> query = queryFactory.select(qEvent)
-                .from(qEvent)
-                .where(qEvent.state.eq(EventState.PUBLISHED));
+        Query queryToGetFriendsEvents = entityManager.createNativeQuery(
+                "SELECT * " +
+                        "FROM events " +
+                        "WHERE id IN " +
+                        "(SELECT DISTINCT event_id " +
+                        "FROM participation_requests " +
+                        "WHERE requester_id IN " +
+                        "(SELECT requester_id " +
+                        "FROM friendship " +
+                        "WHERE friend_id = ?1 " +
+                        "AND friendship_status = ?2 " +
+                        "UNION " +
+                        "SELECT friend_id " +
+                        "FROM friendship " +
+                        "WHERE requester_id = ?1 " +
+                        "AND friendship_status = ?2) " +
+                        "AND (status = ?3 OR status = ?4)) " +
+                        "AND state = ?5 ORDER BY event_date " + sort + " OFFSET ?6 LIMIT ?7", Event.class
+        );
 
-        // Вариант сортировки: по дате события по возрастающей или по убывающей
-        if (descendingSort != null && descendingSort.equals(true)) {
-            query.orderBy(qEvent.eventDate.desc());
-        } else {
-            query.orderBy(qEvent.eventDate.asc());
-        }
+        List<?> resultList = queryToGetFriendsEvents
+                .setParameter(1, userId)
+                .setParameter(2, String.valueOf(FriendshipStatus.CONFIRMED))
+                .setParameter(3, String.valueOf(ParticipationStatus.CONFIRMED))
+                .setParameter(4, String.valueOf(ParticipationStatus.PENDING))
+                .setParameter(5, String.valueOf(EventState.PUBLISHED))
+                .setParameter(6, from)
+                .setParameter(7, size)
+                .getResultList();
 
-        query.offset(from).limit(size);
-
-        List<Event> events = query.fetch();
-
-        return events.stream()
-                .map(EventMapper::eventToEventShortDto)
+        return resultList.stream()
+                .map(r -> EventMapper.eventToEventShortDto((Event) r))
                 .collect(Collectors.toList());
     }
 
