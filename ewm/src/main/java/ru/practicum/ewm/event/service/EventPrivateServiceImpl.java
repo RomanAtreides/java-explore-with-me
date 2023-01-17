@@ -28,7 +28,7 @@ import ru.practicum.ewm.user.common.UserMapper;
 import ru.practicum.ewm.user.dto.UserDto;
 import ru.practicum.ewm.user.model.User;
 import ru.practicum.ewm.user.service.UserAdminService;
-import ru.practicum.ewm.user.state.FriendshipStatus;
+import ru.practicum.ewm.friendship.state.FriendshipStatus;
 import ru.practicum.ewm.utility.FromSizeRequest;
 
 import javax.persistence.EntityManager;
@@ -229,10 +229,14 @@ public class EventPrivateServiceImpl implements EventPrivateService {
         return ParticipationRequestMapper.toParticipationRequestDto(canceledRequest);
     }
 
-    // TODO: 15.01.2023 реализовать метод
-    /*
-     * Подписка на друзей и возможность получать список актуальных событий, в которых они принимают участие
-     * Список событий, которые организовал пользователь
+    /**
+     * Получение списка актуальных событий, в которых принимают участие друзья.
+     *
+     * @param userId         Идентификатор пользователя, список друзей которого необходимо вернуть.
+     * @param descendingSort Значение true - обратная сортировка, false и null - прямая.
+     * @param from           Индекс элемента, начиная с которого необходимо создавать список.
+     * @param size           Размер списка.
+     * @return Список коротких представлений событий, в которых участвуют друзья указанного пользователя.
      */
     @Override
     public List<EventShortDto> findFriendsEvents(Long userId, Boolean descendingSort, Integer from, Integer size) {

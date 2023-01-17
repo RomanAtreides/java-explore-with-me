@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS friendship (
     requester_id BIGINT,
     friend_id BIGINT,
     created TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    received TIMESTAMP WITHOUT TIME ZONE,
+    changed TIMESTAMP WITHOUT TIME ZONE,
     CONSTRAINT pk_friendship PRIMARY KEY (id),
     CONSTRAINT fk_friendship_on_requester FOREIGN KEY (requester_id) REFERENCES users (id) ON DELETE CASCADE,
     CONSTRAINT fk_friendship_on_friend FOREIGN KEY (friend_id) REFERENCES users (id) ON DELETE CASCADE

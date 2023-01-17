@@ -1,8 +1,9 @@
-package ru.practicum.ewm.user.model;
+package ru.practicum.ewm.friendship.model;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import ru.practicum.ewm.user.state.FriendshipStatus;
+import ru.practicum.ewm.user.model.User;
+import ru.practicum.ewm.friendship.state.FriendshipStatus;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -36,8 +37,8 @@ public class Friendship {
     @Column(name = "created")
     LocalDateTime created;
 
-    @Column(name = "received")
-    LocalDateTime received;
+    @Column(name = "changed")
+    LocalDateTime changed;
 
     @Override
     public String toString() {
@@ -47,7 +48,7 @@ public class Friendship {
                 ", requester id=" + requester.getId() +
                 ", requester id=" + friend.getId() +
                 ", created=" + created +
-                ", created=" + received +
+                ", created=" + changed +
                 '}';
     }
 }

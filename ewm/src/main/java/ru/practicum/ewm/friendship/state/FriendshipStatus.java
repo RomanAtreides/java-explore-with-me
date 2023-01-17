@@ -1,8 +1,8 @@
-package ru.practicum.ewm.user.state;
+package ru.practicum.ewm.friendship.state;
 
 public enum FriendshipStatus {
 
-    CANCELED,   // Отменена создателем заявки
+    CANCELED,   // Отменена
     CONFIRMED,  // Подтверждена
     PENDING;    // На рассмотрении
 
