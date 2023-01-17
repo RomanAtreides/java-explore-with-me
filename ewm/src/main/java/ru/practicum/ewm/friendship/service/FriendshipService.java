@@ -1,12 +1,13 @@
 package ru.practicum.ewm.friendship.service;
 
+import ru.practicum.ewm.friendship.dto.FriendshipDto;
 import ru.practicum.ewm.user.dto.UserDto;
 
 import java.util.List;
 
 public interface FriendshipService {
 
-    void addNewFriendshipRequest(Long userId, Long friendId);
+    FriendshipDto addNewFriendshipRequest(Long userId, Long friendId);
 
     void confirmFriendship(Long userId, Long friendId);
 

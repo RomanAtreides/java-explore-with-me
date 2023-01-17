@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.exception.EntityNotFoundException;
 import ru.practicum.ewm.exception.ValidationException;
+import ru.practicum.ewm.friendship.common.FriendshipMapper;
+import ru.practicum.ewm.friendship.dto.FriendshipDto;
 import ru.practicum.ewm.user.common.UserMapper;
 import ru.practicum.ewm.user.dto.UserDto;
 import ru.practicum.ewm.friendship.model.Friendship;
@@ -29,7 +31,7 @@ public class FriendshipServiceImpl implements FriendshipService {
     private final UserRepository userRepository;
 
     @Override
-    public void addNewFriendshipRequest(Long userId, Long friendId) {
+    public FriendshipDto addNewFriendshipRequest(Long userId, Long friendId) {
         if (userId.equals(friendId)) {
             throw new ValidationException("Нельзя создать заявку на дружбу с самим собой");
         }
@@ -68,7 +70,9 @@ public class FriendshipServiceImpl implements FriendshipService {
                 .changed(null)
                 .build();
 
-        friendshipRepository.save(friendship);
+        Friendship entity = friendshipRepository.save(friendship);
+
+        return FriendshipMapper.toFriendshipDto(entity);
     }
 
     @Override

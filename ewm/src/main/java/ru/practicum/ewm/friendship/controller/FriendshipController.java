@@ -3,6 +3,7 @@ package ru.practicum.ewm.friendship.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.ewm.friendship.dto.FriendshipDto;
 import ru.practicum.ewm.user.dto.UserDto;
 import ru.practicum.ewm.friendship.service.FriendshipService;
 
@@ -19,11 +20,11 @@ public class FriendshipController {
 
     // Friendship - Создание заявки на добавление пользователя в свой список друзей
     @PostMapping("/{userId}/add/{friendId}")
-    public void addNewFriendshipRequest(
+    public FriendshipDto addNewFriendshipRequest(
             @NotNull @PathVariable Long userId,
             @NotNull @PathVariable Long friendId) {
         log.info("Добавление пользователем с id={} пользователя с id={} в свой список друзей", userId, friendId);
-        friendshipService.addNewFriendshipRequest(userId, friendId);
+        return friendshipService.addNewFriendshipRequest(userId, friendId);
     }
 
     // Friendship - Подтверждение заявки на дружбу
