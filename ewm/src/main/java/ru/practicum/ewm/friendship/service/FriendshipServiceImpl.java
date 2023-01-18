@@ -44,6 +44,12 @@ public class FriendshipServiceImpl implements FriendshipService {
             );
         }
 
+        /*
+         * В списке users создателем заявки на дружбу всегда будет пользователь с меньшим id
+         * и механизм подтверждения заявок будет работать неправильно.
+         * Чтобы исправить эту ошибку, необходимо отсортировать список users в обратном порядке,
+         * если id создателя заявки больше id друга.
+         */
         if (userId > friendId) {
             users = users.stream()
                     .sorted((u1, u2) -> u2.getId().compareTo(u1.getId()))
@@ -55,7 +61,7 @@ public class FriendshipServiceImpl implements FriendshipService {
 
         Friendship friendship = friendshipRepository.findByRequesterIdAndFriendId(userId, friendId);
 
-        if (friendship != null) {
+        if (friendship != null && !friendship.getStatus().equals(FriendshipStatus.CANCELED)) {
             throw new ValidationException(String.format(
                     "Заявка не дружбу между пользователями с id=%d и id=%d уже существует", userId, friendId
             ));
