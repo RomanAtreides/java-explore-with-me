@@ -14,15 +14,15 @@ import java.time.LocalDateTime;
 @Builder
 public class FriendshipDto {
 
-    FriendshipStatus status;
+    FriendshipStatus status; // Статус заявки на дружбу
 
-    Long requesterId;
+    Long requesterId; // Идентификатор создателя заявки
 
-    Long friendId;
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    LocalDateTime created;
+    Long friendId; // Идентификатор потенциального друга
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    LocalDateTime changed;
+    LocalDateTime created; // Дата создания заявки
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    LocalDateTime changed; // Дата изменения заявки
 }

@@ -20,23 +20,23 @@ public class Friendship {
 
     @Column(name = "friendship_status", nullable = false)
     @Enumerated(EnumType.STRING)
-    FriendshipStatus status;
+    FriendshipStatus status; // Статус заявки на дружбу
 
     @Id
     @ManyToOne
     @JoinColumn(name = "requester_id", nullable = false)
-    User requester;
+    User requester; // Создатель заявки
 
     @Id
     @ManyToOne
     @JoinColumn(name = "friend_id", nullable = false)
-    User friend;
+    User friend; // Потенциальный друг
 
     @Column(name = "created", nullable = false)
-    LocalDateTime created;
+    LocalDateTime created; // Дата создания заявки
 
     @Column(name = "changed")
-    LocalDateTime changed;
+    LocalDateTime changed; // Дата изменения заявки
 
     @Override
     public String toString() {
