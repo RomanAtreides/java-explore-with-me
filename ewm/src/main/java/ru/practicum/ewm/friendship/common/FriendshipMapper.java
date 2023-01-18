@@ -9,7 +9,6 @@ public class FriendshipMapper {
 
     public static FriendshipDto toFriendshipDto(Friendship friendship) {
         return FriendshipDto.builder()
-                .id(friendship.getId())
                 .status(friendship.getStatus())
                 .requesterId(friendship.getRequester().getId())
                 .friendId(friendship.getFriend().getId())

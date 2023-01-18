@@ -62,7 +62,6 @@ public class FriendshipServiceImpl implements FriendshipService {
         }
 
         friendship = Friendship.builder()
-                .id(null)
                 .status(FriendshipStatus.PENDING)
                 .requester(user)
                 .friend(friend)
@@ -76,7 +75,7 @@ public class FriendshipServiceImpl implements FriendshipService {
     }
 
     @Override
-    public void confirmFriendship(Long userId, Long friendId) {
+    public FriendshipDto confirmFriendship(Long userId, Long friendId) {
         Friendship friendship = getFriendshipIfExists(userId, friendId);
 
         if (friendship.getStatus().equals(FriendshipStatus.CONFIRMED)) {
@@ -96,11 +95,14 @@ public class FriendshipServiceImpl implements FriendshipService {
         }
         friendship.setStatus(FriendshipStatus.CONFIRMED);
         friendship.setChanged(LocalDateTime.now());
-        friendshipRepository.save(friendship);
+
+        Friendship entity = friendshipRepository.save(friendship);
+
+        return FriendshipMapper.toFriendshipDto(entity);
     }
 
     @Override
-    public void cancelFriendship(Long userId, Long friendId) {
+    public FriendshipDto cancelFriendship(Long userId, Long friendId) {
         Friendship friendship = getFriendshipIfExists(userId, friendId);
 
         if (friendship.getStatus().equals(FriendshipStatus.CANCELED)) {
@@ -110,7 +112,10 @@ public class FriendshipServiceImpl implements FriendshipService {
         }
         friendship.setStatus(FriendshipStatus.CANCELED);
         friendship.setChanged(LocalDateTime.now());
-        friendshipRepository.save(friendship);
+
+        Friendship entity = friendshipRepository.save(friendship);
+
+        return FriendshipMapper.toFriendshipDto(entity);
     }
 
     @Override

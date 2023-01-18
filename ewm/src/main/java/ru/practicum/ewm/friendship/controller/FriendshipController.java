@@ -18,7 +18,7 @@ public class FriendshipController {
 
     private final FriendshipService friendshipService;
 
-    // Friendship - Создание заявки на добавление пользователя в свой список друзей
+    // Friendship - Создание заявки на дружбу
     @PostMapping("/{userId}/add/{friendId}")
     public FriendshipDto addNewFriendshipRequest(
             @NotNull @PathVariable Long userId,
@@ -29,20 +29,20 @@ public class FriendshipController {
 
     // Friendship - Подтверждение заявки на дружбу
     @PatchMapping("/{userId}/confirm/{friendId}")
-    public void confirmFriendship(
+    public FriendshipDto confirmFriendship(
             @NotNull @PathVariable Long userId,
             @NotNull @PathVariable Long friendId) {
         log.info("Подтверждение пользователем с id={} заявки на дружбу с пользователем с id={}", userId, friendId);
-        friendshipService.confirmFriendship(userId, friendId);
+        return friendshipService.confirmFriendship(userId, friendId);
     }
 
     // Friendship - Удаление пользователя из своего списка друзей
     @PatchMapping("/{userId}/cancel/{friendId}")
-    public void removeFriend(
+    public FriendshipDto cancelFriendship(
             @NotNull @PathVariable Long userId,
             @NotNull @PathVariable Long friendId) {
         log.info("Удаление пользователем с id={} пользователя с id={} из своего списка друзей", userId, friendId);
-        friendshipService.cancelFriendship(userId, friendId);
+        return friendshipService.cancelFriendship(userId, friendId);
     }
 
     // Friendship - Просмотр списка своих друзей

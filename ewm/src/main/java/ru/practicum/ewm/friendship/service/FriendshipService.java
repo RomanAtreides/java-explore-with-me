@@ -9,9 +9,9 @@ public interface FriendshipService {
 
     FriendshipDto addNewFriendshipRequest(Long userId, Long friendId);
 
-    void confirmFriendship(Long userId, Long friendId);
+    FriendshipDto confirmFriendship(Long userId, Long friendId);
 
-    void cancelFriendship(Long userId, Long friendId);
+    FriendshipDto cancelFriendship(Long userId, Long friendId);
 
     List<UserDto> findFriends(Long userId);
 }

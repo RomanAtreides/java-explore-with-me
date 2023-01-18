@@ -14,8 +14,6 @@ import java.time.LocalDateTime;
 @Builder
 public class FriendshipDto {
 
-    Long id;
-
     FriendshipStatus status;
 
     Long requesterId;

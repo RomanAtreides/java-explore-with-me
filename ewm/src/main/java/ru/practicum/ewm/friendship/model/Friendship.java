@@ -2,8 +2,8 @@ package ru.practicum.ewm.friendship.model;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import ru.practicum.ewm.user.model.User;
 import ru.practicum.ewm.friendship.state.FriendshipStatus;
+import ru.practicum.ewm.user.model.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -15,26 +15,24 @@ import java.time.LocalDateTime;
 @Builder
 @Entity
 @Table(name = "friendship")
+@IdClass(FriendshipId.class)
 public class Friendship {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    Long id;
-
-    @Column(name = "friendship_status")
+    @Column(name = "friendship_status", nullable = false)
     @Enumerated(EnumType.STRING)
     FriendshipStatus status;
 
+    @Id
     @ManyToOne
-    @JoinColumn(name = "requester_id")
+    @JoinColumn(name = "requester_id", nullable = false)
     User requester;
 
+    @Id
     @ManyToOne
-    @JoinColumn(name = "friend_id")
+    @JoinColumn(name = "friend_id", nullable = false)
     User friend;
 
-    @Column(name = "created")
+    @Column(name = "created", nullable = false)
     LocalDateTime created;
 
     @Column(name = "changed")
@@ -43,7 +41,6 @@ public class Friendship {
     @Override
     public String toString() {
         return "ParticipationRequest{" +
-                "id=" + id +
                 ", status=" + status +
                 ", requester id=" + requester.getId() +
                 ", requester id=" + friend.getId() +
