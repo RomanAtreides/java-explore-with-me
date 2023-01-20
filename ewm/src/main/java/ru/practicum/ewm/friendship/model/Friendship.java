@@ -8,11 +8,12 @@ import ru.practicum.ewm.user.model.User;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Getter
+@Setter
 @Entity
 @Table(name = "friendship")
 @IdClass(FriendshipId.class)
@@ -39,13 +40,31 @@ public class Friendship {
     LocalDateTime changed; // Дата изменения заявки
 
     @Override
+    public int hashCode() {
+        return 42;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Friendship other = (Friendship) obj;
+        return requester != null && friend != null
+                && requester.equals(other.requester) && friend.equals(other.requester);
+    }
+
+    @Override
     public String toString() {
         return "ParticipationRequest{" +
                 ", status=" + status +
-                ", requester id=" + requester.getId() +
-                ", requester id=" + friend.getId() +
+                ", requester_id=" + requester.getId() +
+                ", friend_id=" + friend.getId() +
                 ", created=" + created +
-                ", created=" + changed +
+                ", changed=" + changed +
                 '}';
     }
 }

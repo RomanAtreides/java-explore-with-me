@@ -23,9 +23,9 @@ public class CategoryAdminServiceImpl implements CategoryAdminService {
         Long catId = categoryDto.getId();
         Category category = categoryValidator.getCategoryIfExists(catId);
 
-        category.setId(catId);
         category.setName(categoryDto.getName());
-        return CategoryMapper.toCategoryDto(category);
+        Category entity = categoryRepository.save(category);
+        return CategoryMapper.toCategoryDto(entity);
     }
 
     @Override

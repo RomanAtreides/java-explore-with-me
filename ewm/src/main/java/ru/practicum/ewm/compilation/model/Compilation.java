@@ -1,19 +1,18 @@
 package ru.practicum.ewm.compilation.model;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 import ru.practicum.ewm.event.model.Event;
 
 import javax.persistence.*;
+import java.util.Objects;
 import java.util.Set;
 
-@Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 @Entity
 @Table(name = "compilations")
 public class Compilation {
@@ -34,6 +33,33 @@ public class Compilation {
     @Column(name = "pinned")
     Boolean pinned;
 
-    @Column(name = "title")
+    @Column(name = "title", nullable = false, unique = true)
     String title;
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(title);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Compilation other = (Compilation) obj;
+        return Objects.equals(title, other.title);
+    }
+
+    @Override
+    public String toString() {
+        return "Compilation{" +
+                "id=" + id +
+                ", events_size=" + events.size() +
+                ", pinned=" + pinned +
+                ", title='" + title + '\'' +
+                '}';
+    }
 }
