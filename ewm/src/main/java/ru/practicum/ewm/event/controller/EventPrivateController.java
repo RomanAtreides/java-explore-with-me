@@ -124,4 +124,16 @@ public class EventPrivateController {
         );
         return eventPrivateService.rejectParticipationRequest(userId, eventId, reqId);
     }
+
+
+    // Private: Events - Просмотр списка событий, в которых участвуют друзья
+    @GetMapping("/friendship")
+    List<EventShortDto> findFriendsEvents(
+            @NotNull @PathVariable Long userId,
+            @RequestParam(required = false, defaultValue = "false") Boolean descendingSort,
+            @RequestParam(required = false, defaultValue = "0") Integer from,
+            @RequestParam(required = false, defaultValue = "10") Integer size) {
+        log.info("Просмотр списка событий, в которых участвуют друзья");
+        return eventPrivateService.findFriendsEvents(userId, descendingSort, from, size);
+    }
 }

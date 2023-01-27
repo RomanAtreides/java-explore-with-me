@@ -8,11 +8,13 @@ import ru.practicum.ewm.user.model.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
-@Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 @Builder
 @Entity
 @Table(name = "events")
@@ -68,9 +70,48 @@ public class Event {
     @Enumerated(EnumType.STRING)
     EventState state;
 
-    @Column(name = "title")
+    @Column(name = "title", nullable = false, unique = true)
     String title;
 
     @Column(name = "views")
     Long views;
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(title);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Event other = (Event) obj;
+        return Objects.equals(title, other.title);
+    }
+
+    @Override
+    public String toString() {
+        return "Event{" +
+                "id=" + id +
+                ", annotation_length='" + (annotation != null ? annotation.length() : "0") + '\'' +
+                ", category_name=" + category.getName() +
+                ", confirmedRequests=" + confirmedRequests +
+                ", createdOn=" + createdOn +
+                ", description_length='" + (description != null ? description.length() : "0") + '\'' +
+                ", eventDate=" + eventDate +
+                ", initiator_email=" + (initiator != null ? initiator.getEmail() : "empty") +
+                ", location=" + location +
+                ", paid=" + paid +
+                ", participantLimit=" + participantLimit +
+                ", publishedOn=" + publishedOn +
+                ", requestModeration=" + requestModeration +
+                ", state=" + state +
+                ", title='" + title + '\'' +
+                ", views=" + views +
+                '}';
+    }
 }

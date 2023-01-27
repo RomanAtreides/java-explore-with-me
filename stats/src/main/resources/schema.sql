@@ -4,5 +4,5 @@ CREATE TABLE IF NOT EXISTS stats (
     uri VARCHAR(512),
     ip VARCHAR(32),
     view_date TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    CONSTRAINT pk_stats PRIMARY KEY (id)
+    PRIMARY KEY (id)
 );

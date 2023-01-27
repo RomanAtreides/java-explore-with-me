@@ -9,18 +9,18 @@ import ru.practicum.ewm.category.dto.CategoryDto;
 import ru.practicum.ewm.category.model.Category;
 import ru.practicum.ewm.category.service.CategoryPublicService;
 import ru.practicum.ewm.event.common.EventMapper;
-import ru.practicum.ewm.event.state.EventState;
-import ru.practicum.ewm.event.state.ParticipationStatus;
 import ru.practicum.ewm.event.dto.EventFullDto;
 import ru.practicum.ewm.event.dto.EventShortDto;
 import ru.practicum.ewm.event.dto.NewEventDto;
+import ru.practicum.ewm.event.dto.UpdateEventRequest;
 import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.event.repository.EventRepository;
+import ru.practicum.ewm.event.state.EventState;
+import ru.practicum.ewm.event.state.ParticipationStatus;
 import ru.practicum.ewm.exception.AccessException;
 import ru.practicum.ewm.exception.EntityNotFoundException;
 import ru.practicum.ewm.exception.ValidationException;
 import ru.practicum.ewm.request.common.ParticipationRequestMapper;
-import ru.practicum.ewm.event.dto.UpdateEventRequest;
 import ru.practicum.ewm.request.dto.ParticipationRequestDto;
 import ru.practicum.ewm.request.model.ParticipationRequest;
 import ru.practicum.ewm.request.repository.ParticipationRequestRepository;
@@ -28,8 +28,11 @@ import ru.practicum.ewm.user.common.UserMapper;
 import ru.practicum.ewm.user.dto.UserDto;
 import ru.practicum.ewm.user.model.User;
 import ru.practicum.ewm.user.service.UserAdminService;
+import ru.practicum.ewm.friendship.state.FriendshipStatus;
 import ru.practicum.ewm.utility.FromSizeRequest;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +43,7 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class EventPrivateServiceImpl implements EventPrivateService {
 
+    private final EntityManager entityManager;
     private final EventRepository eventRepository;
     private final UserAdminService userAdminService;
     private final CategoryPublicService categoryPublicService;
@@ -223,6 +227,54 @@ public class EventPrivateServiceImpl implements EventPrivateService {
         ParticipationRequest canceledRequest = participationRequestRepository.save(request);
 
         return ParticipationRequestMapper.toParticipationRequestDto(canceledRequest);
+    }
+
+    /**
+     * Получение списка актуальных событий, в которых принимают участие друзья.
+     *
+     * @param userId         Идентификатор пользователя, список друзей которого необходимо вернуть.
+     * @param descendingSort Значение true - обратная сортировка событий, false и null - прямая.
+     * @param from           Индекс элемента, начиная с которого необходимо создавать список.
+     * @param size           Размер списка.
+     * @return Список коротких представлений событий, в которых участвуют друзья указанного пользователя.
+     */
+    @Override
+    public List<EventShortDto> findFriendsEvents(Long userId, Boolean descendingSort, Integer from, Integer size) {
+        String sort = descendingSort ? "DESC" : "ASC";
+
+        Query queryToGetFriendsEvents = entityManager.createNativeQuery(
+                "SELECT * " +
+                        "FROM events " +
+                        "WHERE id IN " +
+                        "(SELECT DISTINCT event_id " +
+                        "FROM participation_requests " +
+                        "WHERE requester_id IN " +
+                        "(SELECT requester_id " +
+                        "FROM friendship " +
+                        "WHERE friend_id = ?1 " +
+                        "AND friendship_status = ?2 " +
+                        "UNION " +
+                        "SELECT friend_id " +
+                        "FROM friendship " +
+                        "WHERE requester_id = ?1 " +
+                        "AND friendship_status = ?2) " +
+                        "AND (status = ?3 OR status = ?4)) " +
+                        "AND state = ?5 ORDER BY event_date " + sort + " OFFSET ?6 LIMIT ?7", Event.class
+        );
+
+        List<?> resultList = queryToGetFriendsEvents
+                .setParameter(1, userId)
+                .setParameter(2, String.valueOf(FriendshipStatus.CONFIRMED))
+                .setParameter(3, String.valueOf(ParticipationStatus.CONFIRMED))
+                .setParameter(4, String.valueOf(ParticipationStatus.PENDING))
+                .setParameter(5, String.valueOf(EventState.PUBLISHED))
+                .setParameter(6, from)
+                .setParameter(7, size)
+                .getResultList();
+
+        return resultList.stream()
+                .map(r -> EventMapper.eventToEventShortDto((Event) r))
+                .collect(Collectors.toList());
     }
 
     private Event getEventIfExists(Long eventId) {

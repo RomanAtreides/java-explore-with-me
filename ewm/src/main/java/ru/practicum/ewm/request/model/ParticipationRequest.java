@@ -9,10 +9,11 @@ import ru.practicum.ewm.user.model.User;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 @Builder
 @Entity
 @Table(name = "participation_requests")
@@ -27,15 +28,32 @@ public class ParticipationRequest {
     LocalDateTime created;
 
     @ManyToOne
-    @JoinColumn(name = "event_id")
+    @JoinColumn(name = "event_id", nullable = false)
     Event event;
 
     @ManyToOne
-    @JoinColumn(name = "requester_id")
+    @JoinColumn(name = "requester_id", nullable = false)
     User requester;
 
     @Enumerated(EnumType.STRING)
     ParticipationStatus status;
+
+    @Override
+    public int hashCode() {
+        return 42;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        ParticipationRequest other = (ParticipationRequest) obj;
+        return id != null && id.equals(other.getId());
+    }
 
     @Override
     public String toString() {

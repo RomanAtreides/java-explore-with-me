@@ -1,0 +1,549 @@
+{
+	"info": {
+		"_postman_id": "38090d84-7848-4c14-bfd3-985588046264",
+		"name": "EWM Feature requests collection",
+		"description": "Коллекция запросов для дополнительной функциональности к дипломному проекту.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21421657"
+	},
+	"item": [
+		{
+			"name": "feature",
+			"item": [
+				{
+					"name": "Add new friendship request fail if user id equaul friend id",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/friendship/:Id/add/:friendId",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"friendship",
+								":Id",
+								"add",
+								":friendId"
+							],
+							"variable": [
+								{
+									"key": "Id",
+									"value": "1",
+									"description": "id пользователя создающего заявку"
+								},
+								{
+									"key": "friendId",
+									"value": "1",
+									"description": "id потенциального друга"
+								}
+							]
+						},
+						"description": "Пользователь не может добавить в друзья самого себя."
+					},
+					"response": []
+				},
+				{
+					"name": "Add new friendship request fail if user not found",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/friendship/:Id/add/:friendId",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"friendship",
+								":Id",
+								"add",
+								":friendId"
+							],
+							"variable": [
+								{
+									"key": "Id",
+									"value": "1",
+									"description": "id пользователя создающего заявку"
+								},
+								{
+									"key": "friendId",
+									"value": "9999",
+									"description": "id потенциального друга"
+								}
+							]
+						},
+						"description": "Нельзя добавить в друзья пользователя не зарегистрированного в системе."
+					},
+					"response": []
+				},
+				{
+					"name": "Add new friendship request",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/friendship/:Id/add/:friendId",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"friendship",
+								":Id",
+								"add",
+								":friendId"
+							],
+							"variable": [
+								{
+									"key": "Id",
+									"value": "1",
+									"description": "id пользователя создающего заявку"
+								},
+								{
+									"key": "friendId",
+									"value": "2",
+									"description": "id потенциального друга"
+								}
+							]
+						},
+						"description": "Создание запроса на добавление указанного пользователя в друзья."
+					},
+					"response": []
+				},
+				{
+					"name": "Add new friend fail if friendship request already exists",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/friendship/:Id/add/:friendId",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"friendship",
+								":Id",
+								"add",
+								":friendId"
+							],
+							"variable": [
+								{
+									"key": "Id",
+									"value": "2",
+									"description": "id пользователя создающего заявку"
+								},
+								{
+									"key": "friendId",
+									"value": "1",
+									"description": "id потенциального друга"
+								}
+							]
+						},
+						"description": "Нельзя создать заявку на добавление пользователя в друзья если она уже существует. Ограничение действует даже если создать заявку пытается пользователь, который в существующей заявке является добавляемым другом."
+					},
+					"response": []
+				},
+				{
+					"name": "Confirm friendship fail",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/friendship/:Id/confirm/:friendId",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"friendship",
+								":Id",
+								"confirm",
+								":friendId"
+							],
+							"variable": [
+								{
+									"key": "Id",
+									"value": "1",
+									"description": "id пользователя подтверждающего заявку"
+								},
+								{
+									"key": "friendId",
+									"value": "2",
+									"description": "id потенциального друга"
+								}
+							]
+						},
+						"description": "Создатель заявки не может подтвердить дружбу."
+					},
+					"response": []
+				},
+				{
+					"name": "Confirm friendship",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/friendship/:Id/confirm/:friendId",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"friendship",
+								":Id",
+								"confirm",
+								":friendId"
+							],
+							"variable": [
+								{
+									"key": "Id",
+									"value": "2",
+									"description": "id пользователя подтверждающего заявку"
+								},
+								{
+									"key": "friendId",
+									"value": "1",
+									"description": "id потенциального друга"
+								}
+							]
+						},
+						"description": "Подтверждение дружбы."
+					},
+					"response": []
+				},
+				{
+					"name": "Remove friend",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/friendship/:Id/cancel/:friendId",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"friendship",
+								":Id",
+								"cancel",
+								":friendId"
+							],
+							"variable": [
+								{
+									"key": "Id",
+									"value": "1",
+									"description": "id пользователя отменяющего заявку"
+								},
+								{
+									"key": "friendId",
+									"value": "2",
+									"description": "id потенциального друга"
+								}
+							]
+						},
+						"description": "Удаление из списка друзей или отмена дружбы. Действие может быть выполнено любым другом из указанной пары пользователей."
+					},
+					"response": []
+				},
+				{
+					"name": "Add new friendship request 2",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/friendship/:Id/add/:friendId",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"friendship",
+								":Id",
+								"add",
+								":friendId"
+							],
+							"variable": [
+								{
+									"key": "Id",
+									"value": "1",
+									"description": "id пользователя создающего заявку"
+								},
+								{
+									"key": "friendId",
+									"value": "3",
+									"description": "id потенциального друга"
+								}
+							]
+						},
+						"description": "Создание запроса на добавление указанного пользователя в друзья."
+					},
+					"response": []
+				},
+				{
+					"name": "Confirm friendship 2",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/friendship/:Id/confirm/:friendId",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"friendship",
+								":Id",
+								"confirm",
+								":friendId"
+							],
+							"variable": [
+								{
+									"key": "Id",
+									"value": "3",
+									"description": "id пользователя подтверждающего заявку"
+								},
+								{
+									"key": "friendId",
+									"value": "1",
+									"description": "id потенциального друга"
+								}
+							]
+						},
+						"description": "Подтверждение дружбы."
+					},
+					"response": []
+				},
+				{
+					"name": "Add new friendship request 3",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/friendship/:Id/add/:friendId",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"friendship",
+								":Id",
+								"add",
+								":friendId"
+							],
+							"variable": [
+								{
+									"key": "Id",
+									"value": "3",
+									"description": "id пользователя создающего заявку"
+								},
+								{
+									"key": "friendId",
+									"value": "2",
+									"description": "id потенциального друга"
+								}
+							]
+						},
+						"description": "Создание запроса на добавление указанного пользователя в друзья."
+					},
+					"response": []
+				},
+				{
+					"name": "Confirm friendship 3",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/friendship/:Id/confirm/:friendId",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"friendship",
+								":Id",
+								"confirm",
+								":friendId"
+							],
+							"variable": [
+								{
+									"key": "Id",
+									"value": "2",
+									"description": "id пользователя подтверждающего заявку"
+								},
+								{
+									"key": "friendId",
+									"value": "3",
+									"description": "id потенциального друга"
+								}
+							]
+						},
+						"description": "Подтверждение дружбы."
+					},
+					"response": []
+				},
+				{
+					"name": "Find user friends",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/friendship/:id",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"friendship",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "3",
+									"description": "id пользователя, список друзей которого надо вернуть"
+								}
+							]
+						},
+						"description": "Получение списка друзей указанного пользователя."
+					},
+					"response": []
+				},
+				{
+					"name": "Add participation request by user 1",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/users/:userId/requests?eventId=1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users",
+								":userId",
+								"requests"
+							],
+							"query": [
+								{
+									"key": "eventId",
+									"value": "1",
+									"description": "id события, в котором хочет участвовать пользователь"
+								}
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "1",
+									"description": "id пользователя создающего заявку"
+								}
+							]
+						},
+						"description": "Создание запроса на участие в событии."
+					},
+					"response": []
+				},
+				{
+					"name": "Add participation request by user 2",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/users/:userId/requests?eventId=3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users",
+								":userId",
+								"requests"
+							],
+							"query": [
+								{
+									"key": "eventId",
+									"value": "3",
+									"description": "id события, в котором хочет участвовать пользователь"
+								}
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "2",
+									"description": "id пользователя создающего заявку"
+								}
+							]
+						},
+						"description": "Создание запроса на участие в событии."
+					},
+					"response": []
+				},
+				{
+					"name": "Find friends events",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/users/:Id/events/friendship?descendingSort=true&from=0&size=100",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users",
+								":Id",
+								"events",
+								"friendship"
+							],
+							"query": [
+								{
+									"key": "descendingSort",
+									"value": "true",
+									"description": "true - сортировка по убыванию, false - по возрастанию"
+								},
+								{
+									"key": "from",
+									"value": "0",
+									"description": "индекс начального элемента"
+								},
+								{
+									"key": "size",
+									"value": "100",
+									"description": "размер списка"
+								}
+							],
+							"variable": [
+								{
+									"key": "Id",
+									"value": "3",
+									"description": "Id пользователя, события друзей которого необходимо найти"
+								}
+							]
+						},
+						"description": "Получение списка событий, на участие в которых подали заявки друзья. Заявка может быть как подтверждённой, так и находиться на рассмотрении."
+					},
+					"response": []
+				}
+			],
+			"description": "Подписка на друзей с возможностью просмотра событий, в которых они участвуют."
+		}
+	]
+}
